@@ -9,7 +9,7 @@
         <module>manager</module>
         <module>common</module>
     </modules>
-    <groupId>com.hexing</groupId>
+    <groupId>com.sky</groupId>
     <artifactId>BaseStu</artifactId>
     <version>1.0-SNAPSHOT</version>
 

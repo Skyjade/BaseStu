@@ -1,4 +1,4 @@
-package com.hexing.test.baseThing;
+package com.sky.test.baseThing;
 
 /**
  * @Author wangtq

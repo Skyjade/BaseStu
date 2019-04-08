@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.hexing</groupId>
+        <groupId>com.sky</groupId>
         <artifactId>BaseStu</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.hexing</groupId>
+    <groupId>com.sky</groupId>
     <artifactId>netty</artifactId>
     <version>1.0-SNAPSHOT</version>
 
