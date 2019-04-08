@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="js/vue.min.js"></script>
+<body>
+       <div id="app">
+            {{name}}
+           <input type="text" v-model="first">
+           +
+           <input type="text" v-model="second">
+           =
+           <span v-text="result"></span>
+           <!--v-on监听事件-->
+           <button v-on:click="calculate">计算</button>
+           <br>
+           <a :href="url">百度连接</a>
+           <br>
+           <a v-bind:style="{fontSize: size+'px'}" v-bind:href="url">百度连接</a>
+           <!--v-model只能在input,textarea，select等引用-->d
+           <!--v-if ;v-for TODO-->
+           <ul>
+               <li v-for="(item,index) in list" v-if="index %2==0">{{item}}</li>
+               <!--<li v-for="(key,value) in user">{{key}}&#45;&#45;{{value}}</li>-->
+               <li v-for="(item,key) in userList">{{key}}--{{item.name}}--{{item.age}}--{{item.job}}</li>
+           </ul>
+
+           <table border="1" width="500" height="300" bgcolor="#9acd32" cellpadding="10" cellspacing="0">
+
+               <tr>
+                   <!--//表头循环表的字段-->
+                   <th v-for='item in columnList'>{{item}}</th>
+               </tr>
+               <tr v-for='item in userList'>
+                   <!--//循环字段对应的值-->
+                   <td>{{item.name}}</td>
+                   <td>{{item.age}}</td>
+                   <td>{{item.job}}</td>
+               </tr>
+
+
+           </table>
+       </div>
+
+
+
+</body>
+
+<script>
+  //model部分及vm
+  var VM=new Vue({
+        el:'#app',
+        data:{
+            name:"计算器",
+            first:1,
+            second:2,
+            result:0,
+            size:20,
+            url:'http://www.baidu.com',
+            //测试v-for
+            list:[1,2,3,4,5],//集合
+            user:{name:'jack',age:12},//单个
+            //常见
+            userList:[
+                {name:'rose',age:12,job:'worker'},
+                {name:'marin',age:13,job:'doctor'},
+                {name:'james',age:10,job:'programmer'}
+            ],
+            columnList:['姓名','年龄','职位']
+        },
+        methods:{
+            calculate:function () {
+                //需要用this来引入成员
+                this.result=Number.parseInt(this.first)+
+                    Number.parseInt(this.second);
+                alert(this.result)
+            }
+        }
+  });
+</script>
+
+</html>
