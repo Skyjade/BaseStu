@@ -5,43 +5,107 @@
     <title>Title</title>
 </head>
 <script src="js/vue.min.js"></script>
+<script src="js/vue-resource.js"></script>
 <body>
-       <div>
-            模型类型：
-           <select>
-               <option selected="selected">--请选择--</option>
-               <option >变电站</option>
-               <option >断路器</option>
-               <option >负荷开关</option>
-               <option >接地刀闸</option>
-           </select>
+<div>
+    设备类型：
+    <select>
+        <option selected="selected">--请选择--</option>
+        <option >变电站</option>
+        <option >断路器</option>
+        <option >负荷开关</option>
+        <option >接地刀闸</option>
+    </select>
 
-           容器名称：
-           <select>
-               <option  selected="selected">--请选择--</option>
-               <option>toptest1</option>
-               <option>newtest1</option>
-           </select>
+    容器名称：
+    <select>
+        <option  selected="selected">--请选择--</option>
+        <option>toptest1</option>
+        <option>newtest1</option>
+    </select>
 
-           设备名称：
-           <select>
-               <option selected="selected">--请选择--</option>
-               <option>断路器1</option>
-               <option>断路器2</option>
-           </select>
-           <br>
+    设备名称：
+    <select>
+        <option selected="selected">--请选择--</option>
+        <option>断路器1</option>
+        <option>断路器2</option>
+    </select>
+    <br>
 
-               <br>
-           <input type="checkbox"/>遥测1<br>
-           <input type="checkbox"/>遥测2<br>
-           <input type="checkbox"/>遥测3<br>
-           <input type="checkbox"/>遥测4<br>
-           <br>
+    <br>
+    <input type="checkbox"/>遥测1<br>
+    <input type="checkbox"/>遥测2<br>
+    <input type="checkbox"/>遥测3<br>
+    <input type="checkbox"/>遥测4<br>
+    <br>
 
-           <button>匹配</button>
-       </div>
+    <button>匹配</button>
+</div>
+
+
+<br><h1>-----test-vue-ajax-----</h1>
+<div id="box">
+    <!--<input type="button" v-on:click="queryTypeList" value="test"/>-->
+
+    <!--<table  border="1" width="500" height="300" bgcolor="#9acd32" cellpadding="10" cellspacing="0">-->
+    <!--<tr v-for="item in typeList">-->
+    <!--<td>{{item.id}}</td>-->
+    <!--<td>{{item.name}}</td>-->
+    <!--</tr>-->
+    <!--</table>-->
+    设备类型
+    <select v-on:click="queryTypeList">
+        <option  selected="selected">--请选择--</option>
+        <option v-for="item in typeList" value="{{item.id}}">{{item.name}}</option>
+    </select>
+
+    容器
+    <select v-on:click="queryContainerList">
+        <option  selected="selected">--请选择--</option>
+        <option v-for="item in containerList" value="{{item.id}}">{{item.name}}</option>
+    </select>
+
+</div>
 
 </body>
+
+<script>
+    var base='http://192.168.15.171:8080/fe-server/fe/'
+    var vm=new Vue({
+        el:'#box',
+        data:{
+            typeList:"",
+            containerList:""
+        },
+        methods:{
+            queryTypeList:function () {
+                var url=base+'getRefPsrtypeInfo'
+                var params={}
+                this.$http.post(url,params).then(function (data) {   //ajax请求封装
+                    var json = data.body.data;
+                    console.info(json);
+                    this.typeList = json;
+                }, function (response) {     //返回失败方法调用，暂不处理
+                    console.info(response);
+                })
+            },
+            queryContainerList:function () {
+                var url=base+'getRefContainerInfo'
+                var params={}
+                this.$http.post(url,params).then(function (data) {   //ajax请求封装
+                    var json = data.body.data;
+                    console.info(json);
+                    this.containerList = json;
+                }, function (response) {     //返回失败方法调用，暂不处理
+                    console.info(response);
+                })
+            }
+
+        }
+
+    })
+
+</script>
 
 
 </html>
