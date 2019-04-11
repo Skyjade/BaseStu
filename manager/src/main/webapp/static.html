@@ -54,16 +54,31 @@
     <!--</tr>-->
     <!--</table>-->
     设备类型
-    <select v-on:click="queryTypeList">
+    <select v-on:click="queryTypeList" v-model="tid"  @change="queryEquipmentList">
         <option  selected="selected">--请选择--</option>
-        <option v-for="item in typeList" value="{{item.id}}">{{item.name}}</option>
+        <option v-for="item in typeList" :value="item.id">{{item.name}}</option>
+
     </select>
+    <!--选中类型 <span>{{tid}}</span>-->
+    <!--选中容器<span>{{cid}}</span>-->
 
     容器
-    <select v-on:click="queryContainerList">
-        <option  selected="selected">--请选择--</option>
-        <option v-for="item in containerList" value="{{item.id}}">{{item.name}}</option>
+    <select @click="queryContainerList" v-model="cid" @change="queryEquipmentList">
+        <option  selected="selected" value="--请选择--">--请选择--</option>
+        <option v-for="item in containerList" :value="item.id">{{item.name}}</option>
     </select>
+
+     <!--<button @click="queryEquipmentList()">-></button>-->
+
+    设备
+    <select v-on:click="queryEquipmentList" v-model="eid" @change="queryAnalogByEqic" >
+        <option  selected="selected">--请选择--</option>
+        <option v-for="item in equipmentList" :value="item.id">{{item.name}}</option>
+    </select>
+    <ul>
+        <li v-for="item in anlogList">{{item.name}}</li>
+    </ul>
+    <br>
 
 </div>
 
@@ -75,7 +90,12 @@
         el:'#box',
         data:{
             typeList:"",
-            containerList:""
+            containerList:"",
+            equipmentList:"",
+            cid:"",
+            tid:"",
+            eid:"",
+            anlogList:""
         },
         methods:{
             queryTypeList:function () {
@@ -99,7 +119,41 @@
                 }, function (response) {     //返回失败方法调用，暂不处理
                     console.info(response);
                 })
+            },
+            queryEquipmentList:function () {
+                var url=base+'getRefEquipmentInfo';
+                var params={'container_id':this.cid,'type_id':this.tid};
+                this.$http.post(url,params).then(function (data) {   //ajax请求封装
+                    var code=data.body.msg_code
+                    if(code !="operate.success"){
+                        //alert(code)
+                        console.info(code)
+                    }
+                    var json = data.body.data;
+                    console.info(json);
+                    this.equipmentList = json;
+                }, function (response) {     //返回失败方法调用，暂不处理
+                    console.info(response);
+                })
+            },
+            queryAnalogByEqic:function () {
+                var url=base+'getAnlogInfoByEquipment/'+this.eid;
+                var param={}
+                this.$http.post(url,param).then(function (data) {   //ajax请求封装
+                    var code=data.body.msg_code
+                    if(code !="operate.success"){
+                        //alert(code)
+                        console.info('wrongMsg:'+code)
+                    }
+                    var json = data.body.data;
+                    console.info(json);
+                    this.anlogList = json;
+                }, function (response) {     //返回失败方法调用，暂不处理
+                    console.info(response);
+                })
             }
+
+
 
         }
 
