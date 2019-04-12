@@ -43,7 +43,7 @@
 <!--</div>-->
 
 
-<br><h1>-----test-vue-ajax-----</h1>
+<!--<br><h1>-&#45;&#45;&#45;&#45;test-vue-ajax-&#45;&#45;&#45;&#45;</h1>-->
 <div id="box">
     设备类型
     <select v-on:click="queryTypeList" v-model="tid"  @change="queryEquipmentList">
@@ -67,8 +67,24 @@
     </span>
     <br>
 
+
+    <div>
+        <br><br>
+        <H1>↓</H1>
+        当前已选择：
+        <table>
+            <br>
+            <input type="checkbox"/>遥测1<br>
+            <input type="checkbox"/>遥测2<br>
+            <input type="checkbox"/>遥测3<br>
+            <input type="checkbox"/>遥测4<br>
+            <br>
+        </table>
+    </div>
+    <br>
     <!--TODO @click once prevent stop?-->
-    <button v-on:click="feRefScada">绑定</button>
+    <button v-on:click="feRefScada">关联</button>
+    <button v-on:click="feRefScada">还原</button>
 
     <br>
 
