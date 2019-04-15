@@ -69,22 +69,33 @@
 
 
     <div>
-        <br><br>
-        <H1>↓</H1>
+
+        <h1><span>↓</span>  <span>↑</span></h1>
+        <table border="1" width="200" height="100">
+            <tr>
+                <td>
+                    <input type="checkbox">Ia
+
+                </td>
+            </tr>
+        </table>
+        <button v-on:click="feRefScada">还原</button>
+        <br>
+        <br>
         当前已选择：
         <table>
             <br>
-            <input type="checkbox"/>遥测1<br>
-            <input type="checkbox"/>遥测2<br>
-            <input type="checkbox"/>遥测3<br>
-            <input type="checkbox"/>遥测4<br>
+            <span>ntest-遥测1 X</span><br>
+            <span>ntest-遥测2 X</span><br>
+            <span>ntest-遥测3 X</span><br>
+
             <br>
         </table>
     </div>
     <br>
     <!--TODO @click once prevent stop?-->
     <button v-on:click="feRefScada">关联</button>
-    <button v-on:click="feRefScada">还原</button>
+
 
     <br>
 
