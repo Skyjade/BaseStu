@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
-<script src="js/vue.min.js"></script>
-<script src="js/vue-resource.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../js/vue-resource.js"></script>
 <body>
 <!--<div>-->
     <!--设备类型：-->
@@ -62,39 +62,41 @@
         <option  selected="selected" @click="queryAnalogByEqic" value=" ">--请选择--</option>
         <option v-for="item in equipmentList" :value="item.id">{{item.name}}</option>
     </select>
-    <span v-for="item in anlogList" >
-      <br>  <input  type="checkbox" key="item.id">{{item.name}}
-    </span>
-    <br>
+    <br/><br>
+    <!--<span>&nbsp&nbsp</nbsp>+</span>-->
+    <!--<span v-for="item in anlogList" >-->
+      <!--<br>  <input  type="checkbox" key="item.id">{{item.name}} &nbsp;X-->
+    <!--</span>-->
+    <!--<br>-->
 
 
-    <div>
+    <!--<div>-->
 
-        <h1><span>↓</span>  <span>↑</span></h1>
-        <table border="1" width="200" height="100">
-            <tr>
-                <td>
-                    <input type="checkbox">Ia
+        <!--<h1><span>↓</span>  <span>↑</span></h1>-->
+        <!--<table border="1" width="200" height="100">-->
+            <!--<tr>-->
+                <!--<td>-->
+                    <!--<input type="checkbox">Ia-->
 
-                </td>
-            </tr>
-        </table>
-        <button v-on:click="feRefScada">还原</button>
-        <br>
-        <br>
-        当前已选择：
-        <table>
-            <br>
-            <span>ntest-遥测1 X</span><br>
-            <span>ntest-遥测2 X</span><br>
-            <span>ntest-遥测3 X</span><br>
+                <!--</td>-->
+            <!--</tr>-->
+        <!--</table>-->
+        <!--<button v-on:click="feRefScada">还原</button>-->
+        <!--<br>-->
+        <!--<br>-->
+        <!--当前已选择：-->
+        <!--<table>-->
+            <!--<br>-->
+            <!--<span>ntest-遥测1 X</span><br>-->
+            <!--<span>ntest-遥测2 X</span><br>-->
+            <!--<span>ntest-遥测3 X</span><br>-->
 
-            <br>
-        </table>
-    </div>
-    <br>
-    <!--TODO @click once prevent stop?-->
-    <button v-on:click="feRefScada">关联</button>
+            <!--<br>-->
+        <!--</table>-->
+    <!--</div>-->
+    <!--<br>-->
+    <!--&lt;!&ndash;TODO @click once prevent stop?&ndash;&gt;-->
+    <!--<button v-on:click="feRefScada">关联</button>-->
 
 
     <br>
