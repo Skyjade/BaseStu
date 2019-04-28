@@ -1,4 +1,4 @@
-package com.sky.utils.webUtils;
+package com.sky.common.utils.webUtils;
 
 /**
  * Created by Administrator on 15-9-30.

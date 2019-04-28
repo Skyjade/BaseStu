@@ -1,4 +1,4 @@
-package com.sky.utils.str;
+package com.sky.common.utils.str;
 
 import org.apache.commons.lang3.StringUtils;
 

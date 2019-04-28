@@ -1,4 +1,4 @@
-﻿package com.sky.utils.common;
+﻿package com.sky.common.utils.common;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.zxing.*;
