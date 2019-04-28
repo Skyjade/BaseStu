@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="css/libs/element.css" rel="stylesheet">
+		<link href="css/default.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+	</head>
+
+	<body class="gray-bg">
+		<div id="schedule" style="position: relative;width: 100%;height: 100%;">
+			<div class="content_bg leftBox tree" style="overflow: auto;">
+				<el-tree lazy :load="loadNode" :props="props" node-key="no" ref="tree" highlight-current accordion @node-click="handleNodeClick">
+				</el-tree>
+			</div>
+			<div class="rightBox">
+				<div class="content_bg">
+					<div class="tableTitle">
+						<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+							<span v-text="jobTitle"></span>
+						</div>
+						<div class="t_right mg_l15">
+							<el-button round size="small" icon="el-icon-document" @click="resumeTask()"><span data-i18n="timeTask.resume"></span></el-button>
+						</div>
+						<div class="t_right mg_l15">
+							<el-button round size="small" icon="el-icon-document" @click="pauseTask()"><span data-i18n="timeTask.pause"></span></el-button>
+						</div>
+						<div class="t_right mg_l15">
+							<el-button round size="small" icon="el-icon-document" @click="executeTask()"><span data-i18n="timeTask.execute"></span></el-button>
+						</div>
+						<div class="t_right">
+							<el-button round size="small" icon="el-icon-plus" @click="openAddTaskDialog()"><span data-i18n="common.add"></span></el-button>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<el-table v-loading="listLoading" ref="jobList" stripe border :data="jobList" tooltip-effect="dark" @selection-change="handleSelectionChange" max-height="550" style="width: 100%;">
+						<el-table-column type="selection" width="50">
+						</el-table-column>
+						<el-table-column prop="job_name" width="150" :label="$.t('timeTask.taskName')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="job_group" width="150" :label="$.t('timeTask.taskGroup')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="description" width="150" :label="$.t('common.description')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="stateNo" width="120" :label="$.t('common.status')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="cron_expression" width="180" :label="$.t('timeTask.cronExpression')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="trigger_model.start_time_no" width="180" :label="$.t('timeTask.effectiveDate')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="trigger_model.end_time_no" width="180" :label="$.t('timeTask.expDate')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="interval" width="120" :label="$.t('timeTask.interval')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column :label="$.t('common.operate')" min-width="100" fixed="right">
+							<template slot-scope="scope">
+								<el-tooltip class="item" effect="dark" :content="$.t('common.delete')" placement="top">
+									<el-button size="mini" type="danger" icon="el-icon-delete" circle @click="deleteTask(scope.$index, scope.row)"></el-button>
+								</el-tooltip>
+								<el-tooltip class="item" effect="dark" :content="$.t('common.edit')" placement="top">
+									<el-button size="mini" icon="el-icon-edit" circle @click="editTask(scope.$index, scope.row)"></el-button>
+								</el-tooltip>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+			</div>
+			<!--新增任务-->
+			<el-dialog :title="$.t('common.add')" :visible.sync="addTaskDialog" width="800px" :close-on-click-modal="false">
+				<el-form :model="addTaskData" :inline="true" size="small" :rules="rules" ref="addTaskData" label-width="166px" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.taskType')" prop="taskType">
+						<el-select prop="taskType" label-width="100px" v-model="addTaskData.taskType" @change="selectTaskType()" style="width:200px;height: 32px;">
+							<el-option value="0" :label="$.t('timeTask.simpleTask')"></el-option>
+							<el-option value="1" :label="$.t('timeTask.advancedTask')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.misHandInstruct')">
+						<el-select label-width="100px"  v-model="addTaskData.misfireTactic" @change="" style="width:200px;height: 32px;">
+							<el-option value="0" :label="$.t('timeTask.ignore')"></el-option>
+							<el-option value="1" :label="$.t('timeTask.executeOnce')"></el-option>
+							<el-option value="2" :label="$.t('timeTask.executeAll')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.taskName')">
+						<el-input v-model="selJob.job_name" disabled style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.taskGroup')">
+						<el-input v-model="selGroup.group_name" disabled style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" style="width:100%">
+						<el-input type="textarea" :rows="2" v-model="addTaskData.description" style="width: 580px;"></el-input>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.effectiveDate')" prop="executionTime">
+						<el-date-picker type="datetime" placeholder="" v-model="addTaskData.executionTime" value-format="timestamp" :picker-options="pickerOptionsDateLimit" style="width: 200px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.expDate')">
+						<el-date-picker type="datetime" placeholder="" v-model="addTaskData.endTime" value-format="timestamp" style="width: 200px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.interval')" prop="interval">
+						<el-input type="number" min="1" max="999999999999" v-model="addTaskData.interval" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.intervalUnit')" prop="intervalUnit">
+						<el-select prop="taskType" disabled label-width="100px" v-model="addTaskData.intervalUnit" style="width:200px;height: 32px;">
+							<el-option value="Y" :label="$.t('timeTask.year')"></el-option>
+							<el-option value="M" :label="$.t('timeTask.month')"></el-option>
+							<el-option value="D" :label="$.t('timeTask.day')"></el-option>
+							<el-option value="H" :label="$.t('timeTask.hour')"></el-option>
+							<el-option value="MI" :label="$.t('timeTask.minute')"></el-option>
+							<el-option value="S" :label="$.t('timeTask.second')"></el-option>
+							<el-option value="W" :label="$.t('timeTask.week')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item v-show="!isSimpleTask" :label="$.t('timeTask.cronExpression')" prop="expression"style="100%">
+						<el-input v-model="addTaskData.expression" style="width: 580px;"></el-input>
+					</el-form-item>									
+					<el-form-item :label="$.t('timeTask.exclusionTime')" style="100%">
+						<el-date-picker style="width: 580px;" ref="datesRef" type="dates" v-model="addTaskData.exclusionTime" :editable="false" format="yyyy-MM-dd" value-format="timestamp" :placeholder="$.t('timeTask.selDatas')">
+						</el-date-picker>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="addTaskDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="addTaskConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--编辑任务-->
+			<el-dialog :title="$.t('common.edit')" :visible.sync="editTaskDialog" width="800px" :close-on-click-modal="false">
+				<el-form :model="editTaskData" :inline="true" size="small" :rules="rules" ref="editTaskData" label-width="166px" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.taskType')" prop="taskType">
+						<el-select prop="taskType" disabled label-width="130px" v-model="editTaskData.taskType" style="width:200px;height: 32px;">
+							<el-option value="0" :label="$.t('timeTask.simpleTask')"></el-option>
+							<el-option value="1" :label="$.t('timeTask.advancedTask')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.misHandInstruct')">
+						<el-select label-width="100px" v-model="editTaskData.misfireTactic" @change="" style="width:200px;height: 32px;">
+							<el-option value="0" :label="$.t('timeTask.ignore')"></el-option>
+							<el-option value="1" :label="$.t('timeTask.executeOnce')"></el-option>
+							<el-option value="2" :label="$.t('timeTask.executeAll')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.taskName')">
+						<el-input v-model="editTaskData.job_name" disabled style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.taskGroup')">
+						<el-input v-model="editTaskData.job_group" disabled style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" style="width:100%">
+						<el-input type="textarea" :rows="2" v-model="editTaskData.description" style="width: 580px;"></el-input>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.effectiveDate')" prop="executionTime">
+						<el-date-picker type="datetime" placeholder="" v-model="editTaskData.executionTime" value-format="timestamp" :picker-options="pickerOptionsDateLimit" style="width: 200px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.expDate')">
+						<el-date-picker type="datetime" placeholder="" v-model="editTaskData.endTime" value-format="timestamp" style="width: 200px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.interval')" prop="interval">
+						<el-input type="number" min="1" max="999999999999" v-model="editTaskData.interval" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item v-show="isSimpleTask" :label="$.t('timeTask.intervalUnit')" prop="intervalUnit">
+						<el-select prop="taskType" disabled label-width="100px" v-model="editTaskData.intervalUnit" style="width:200px;height: 32px;">
+							<el-option value="Y" :label="$.t('timeTask.year')"></el-option>
+							<el-option value="M" :label="$.t('timeTask.month')"></el-option>
+							<el-option value="D" :label="$.t('timeTask.day')"></el-option>
+							<el-option value="H" :label="$.t('timeTask.hour')"></el-option>
+							<el-option value="MI" :label="$.t('timeTask.minute')"></el-option>
+							<el-option value="S" :label="$.t('timeTask.second')"></el-option>
+							<el-option value="W" :label="$.t('timeTask.week')"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item v-show="!isSimpleTask" :label="$.t('timeTask.cronExpression')" prop="expression">
+						<el-input v-model="editTaskData.expression" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.exclusionTime')" style="100%">
+						<el-date-picker style="width: 580px;" ref="datesRef" type="dates" v-model="editTaskData.exclusionTime" :editable="false" format="yyyy-MM-dd" value-format="timestamp" :placeholder="$.t('timeTask.selDatas')">
+						</el-date-picker>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="editTaskDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="editTaskConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>		
+		</div>
+		<script src="js/schedule.js"></script>
+	</body>
+
+</html>

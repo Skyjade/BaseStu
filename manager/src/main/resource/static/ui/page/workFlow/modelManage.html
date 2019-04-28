@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>processForm</title>
+		<link href="css/all.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+		<script src="libs/jquery.form.js"></script>
+		<style type="text/css">
+			.el-select .el-input {
+				width: 130px;
+			}
+			
+			.input-with-select .el-input-group__prepend {
+				background-color: #fff;
+			}
+			
+			.el-button.is-circle {
+				border-radius: 50%;
+				padding: 6px;
+			}
+			
+			.leftBox {
+				position: absolute;
+				left: 0;
+				width: 230px;
+				top: 0px;
+				bottom: 0;
+			}
+			
+			.rightBox {
+				position: absolute;
+				left: 245px;
+				right: 0px;
+			}
+			
+			.el-tree-node__content {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				height: 36px;
+				cursor: pointer;
+			}
+			
+			.el-tree-node__label {
+				font-size: 14px;
+				color: #666666;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="modelManage" style="width: 100%;height: 100%;position: relative;">
+			<div class="leftBox content_bg" style="overflow: auto;">
+				<div class="mg_b10">
+					<div class="font15 mg_l20"><span data-i18n="modelManage.processGroup"></span></div>
+				</div>
+				<el-tree :data="modelList" :props="props" node-key="id" highlight-current accordion @node-click="handleNodeClick">
+				</el-tree>
+			</div>
+			<div class="rightBox">
+				<div class="content_bg">
+					<div class="t_left">
+						<el-button round size="small" icon="el-icon-plus" @click="createBtn()"><span data-i18n="modelManage.createApps"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button :disabled="functionDisabled" round size="small" icon="el-icon-edit" @click="openEditDialog()"><span data-i18n="common.edit"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button :disabled="functionDisabled" round size="small" icon="el-icon-delete" @click="deleteBtn()"><span data-i18n="common.delete"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button :disabled="functionDisabled" round size="small" @click="publishBtn()"><span data-i18n="modelManage.publish"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button round size="small" icon="el-icon-edit" @click="uploadAppBtn()"><span data-i18n="modelManage.importApp"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button :disabled="functionDisabled" round size="small" icon="el-icon-download" @click="exportAppBtn()"><span data-i18n="modelManage.exportApp"></span></el-button>
+					</div>
+					<!--<div class="t_left mg_l15">
+						<el-button round size="small" @click="editIncludedModels()"><span data-i18n="workFlow.editIncludedModels"></span></el-button>
+					</div>-->
+					<div class="clear"></div>
+				</div>
+
+				<div class="content_bg mg_t14">
+					<div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="common.version"></span>:</div>
+							<div class="rightText"><span v-text="model.version"></span></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="common.name"></span>:</div>
+							<div class="rightText" v-text="model.name"></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="common.key"></span>:</div>
+							<div class="rightText" v-text="model.key"></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="common.createdBy"></span>:</div>
+							<div class="rightText" v-text="model.created_by"></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="common.description"></span>:</div>
+							<div class="rightText" v-text="model.description"></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="modelManage.lastUpdatedBy"></span>:</div>
+							<div class="rightText" v-text="model.last_updated_by"></div>
+						</div>
+						<div class="detailBox">
+							<div class="leftText"><span data-i18n="modelManage.lastUpdateTime"></span>:</div>
+							<div class="rightText" v-text="model.last_updated"></div>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</div>
+				<div class="content_bg mg_t14">
+					<div style="height: 55px;">
+						<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+							<span data-i18n="modelManage.associationModels"></span>
+						</div>
+						<div class="t_right mg_l15">
+							<el-button :disabled="functionDisabled" round size="small" icon="el-icon-plus" @click="fileUploadBtn()"><span data-i18n="modelManage.importProcess"></span></el-button>
+						</div>
+						<div class="t_right">
+							<el-button :disabled="functionDisabled" round size="small" icon="el-icon-plus" @click="createProceeBtn()"><span data-i18n="modelManage.createProcess"></span></el-button>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<el-table border stripe :data="BPMNModelsList" highlight-current-row @row-click="openDetail">
+						<el-table-column prop="name" :label="$.t('common.name')" min-width="120" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="created_by" :label="$.t('common.createdBy')" width="120" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="last_updated" :formatter="dateFormat" :label="$.t('modelManage.lastUpdateTime')" width="180" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="version" width="80" :label="$.t('common.version')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="description" :label="$.t('common.description')" min-width="120" show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+				</div>
+			</div>
+
+			<el-dialog :title="$.t('modelManage.createApps')" :visible.sync="createAppsDialog" width="370px" :close-on-click-modal="false">
+				<el-form :model="add" :rules="rules" ref="add" label-width="80px" label-position="left">
+					<el-form-item :label="$.t('common.name')" prop="appName">
+						<el-input v-model.trim="add.appName" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.key')" prop="appKey">
+						<el-input v-model.trim="add.appKey" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')">
+						<el-input v-model="add.description" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button type="primary" @click = "createApp()" data-i18n="common.confirm"></el-button>
+					<el-button @click="createAppsDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+
+			<el-dialog :title="$.t('modelManage.editModel')" :visible.sync="editAppsDialog" width="420px" :close-on-click-modal="false">
+				<!--<div>Change any of the model properties below and then press Save to update the model.</div>-->
+				<el-form :model="edit" :rules="rules" ref="edit" label-width="120px" label-position="left">
+					<el-form-item :label="$.t('common.name')" prop="modelName">
+						<el-input v-model.trim="edit.modelName" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.key')" prop="modelKey">
+						<el-input v-model.trim="edit.modelKey" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')">
+						<el-input v-model="edit.description" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="editAppsDialog = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "editModelSave()" data-i18n="common.save"></el-button>
+                </span>
+			</el-dialog>
+
+			<el-dialog :title="$.t('modelManage.createProcess')" :visible.sync="createProcessDialog" width="370px" :close-on-click-modal="false">
+				<el-form :model="glModel" :rules="rules1" ref="glModel" label-width="80px" label-position="left">
+					<el-form-item :label="$.t('common.name')" prop="modelName">
+						<el-input v-model.trim="glModel.modelName" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.key')" prop="modelKey">
+						<el-input v-model.trim="glModel.modelKey" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')">
+						<el-input v-model="glModel.description" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="createProcessDialog = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "createModel()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<el-dialog :title="$.t('modelManage.importProcess')" :visible.sync="fileProcessUpload" width="500px" :close-on-click-modal="false">
+				<form id="uploadProcess" method="post" action="" enctype="multipart/form-data">
+					<div class="fileupload">
+						<input type="file" name="file" id="fileProcess" :title="i18n.uploadFile" />
+						<div style="color: white;width: 180px;text-align: center;" v-text="i18n.uploadFile"></div>
+					</div>
+					<div class="mg_t10 undis" id="fileProcessName">
+						<div class="t_left">
+							<i class="fa fa-file-text-o"></i>
+						</div>
+						<div class="t_left mg_l15">
+							<span id="fileProcessname"></span>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="fileProcessUpload = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "uploadProcess()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<el-dialog :title="$.t('modelManage.importApp')" :visible.sync="fileAppUpload" width="500px" :close-on-click-modal="false">
+				<form id="uploadApp" method="post" action="" enctype="multipart/form-data">
+					<div class="fileupload">
+						<input type="file" name="file" id="fileApp" :title="i18n.uploadFile" />
+						<div style="color: white;width: 180px;text-align: center;" v-text="i18n.uploadFile"></div>
+					</div>
+					<div class="mg_t10 undis" id="fileAppName">
+						<div class="t_left">
+							<i class="fa fa-file-text-o"></i>
+						</div>
+						<div class="t_left mg_l15">
+							<span id="filename"></span>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="fileAppUpload = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "uploadApp()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+		<script type="text/javascript">
+			$('body').on('change', '#fileApp', function() { // 动态绑定id为upload元素的change事件
+				var filename = document.getElementById("fileApp").value;
+				if(filename == undefined || filename == "") {
+					document.getElementById("filename").innerHTML = "";
+				} else {
+					var fn = filename.substring(filename.lastIndexOf("\\") + 1);
+					document.getElementById("filename").innerHTML = fn; //将截取后的文件名填充到span中
+					$("#fileAppName").show();
+				}
+			});
+
+			$('body').on('change', '#uploadProcess', function() { // 动态绑定id为upload元素的change事件
+				var filename = document.getElementById("fileProcess").value;
+				if(filename == undefined || filename == "") {
+					document.getElementById("fileProcessname").innerHTML = "";
+				} else {
+					var fn = filename.substring(filename.lastIndexOf("\\") + 1);
+					document.getElementById("fileProcessname").innerHTML = fn; //将截取后的文件名填充到span中
+					$("#fileProcessName").show();
+				}
+			});
+		</script>
+		<script type="text/javascript" src="js/modelManage.js"></script>
+	</body>
+
+</html>

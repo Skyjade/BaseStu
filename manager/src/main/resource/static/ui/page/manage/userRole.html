@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../../css/all.css" />
+		<script src="../../js/allSecond.js"></script>
+		<style>
+			.middleBox {
+				position: absolute;
+				left: 0px;
+				width:900px;
+				top: 70px;
+				bottom: 0;
+			}
+			
+			.rightBox {
+				position: absolute;
+				right: 0;
+				top: 70px;
+				left:910px;
+				bottom: 0;
+			}
+			.el-tree-node__content {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				height: 36px;
+				cursor: pointer;
+			}
+			
+			.el-tree-node__label {
+				font-size: 14px;
+				color: #666666;
+			}
+			
+		</style>
+	</head>
+
+	<body style="overflow-y: hidden; min-width: 900px;">
+		<div id="userRole" style="position: relative; width: 100%; height: 100%;">
+			<div class="content_bg" style="height: 60px;">
+				<a href="user.html">
+					<el-button size="small" type="primary" icon="el-icon-back"><span data-i18n="common.return"></span></el-button>
+				</a>
+			</div>
+
+			<div class="middleBox content_bg">
+				<div style="position: relative;bottom: 40px;top: 0px;">
+					<div class="content_bg" style="height: 60px;">
+						<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+							<span data-i18n="common.roleTitle"></span>
+						</div>
+						<div class="t_right mg_l15">
+							<el-button size="small" type="primary" icon="el-icon-search" @click="searchUserRole()"><span data-i18n="common.search"></span></el-button>
+						</div>
+						<div class="t_right mg_l15">
+							<el-input v-model.trim="searchRole" size="small" clearable data-i18n="[placeholder]common.inputName" @keyup.enter.native="searchUserRole()"></el-input>
+						</div>
+						<div class="t_right mg_l15">
+							<el-input v-model="orgSearchName" size="small" data-i18n="[placeholder]org.selOrgMessage" @focus="selectOrg()"></el-input>
+						</div>
+						<div class="t_right mg_l15">
+							<el-select size="small" v-model="searchAppID" style="width: 200px;" @change="selectAppID()">
+						<el-option v-for="list in operateApp" :label="list.name" :value="list.id">
+						</el-option>
+					</el-select>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<el-table ref="roleListTable" stripe :data="roleListData" :height="height" tooltip-effect="dark" @selection-change="handleRoleSelectionChange">
+						<el-table-column prop="name" :label="$.t('common.name')" align="center">
+						</el-table-column>
+						<el-table-column :label="$.t('common.operate')" align="center">
+							<template slot-scope="scope">
+								<el-button type="primary" size="mini" style="padding: 7px;" icon="el-icon-plus" circle @click="addUserRole(scope.row)"></el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+				<div class="block" style="background: white;width:320px;height:40px;position: absolute;bottom: 0;z-index: 100;">
+					<el-pagination layout="prev, pager, next" :total="total" :page-size="10" :current-page="currentPage" @current-change="handleCurrentChange">
+					</el-pagination>
+				</div>
+			</div>
+			<div class="rightBox content_bg">
+				<div class="content_bg" style="height: 60px;">
+					<div class="font16 f_color1" style="height:30px;line-height:30px;text-indent:15px;border-radius: 5px;">
+						<span data-i18n="common.userRoleTitle"></span>
+						<span v-text="selUserName"></span>
+						<i class="fa fa-trash-o t_right el-icon-refresh clearTree mg_r10" @click="clearUserRole()"></i>
+					</div>
+				</div>
+				<el-table ref="roleListTable" stripe fit :data="userExistRole" :height="height" tooltip-effect="dark" @selection-change="handleRoleSelectionChange">
+					<el-table-column prop="name" :label="$.t('user.roleName')" align="center">
+					</el-table-column>
+					<el-table-column :label="$.t('common.operate')" align="center">
+						<template slot-scope="scope">
+							<el-button type="danger" size="mini" icon="el-icon-delete" style="padding: 7px;" circle @click="deleteUserRole(scope.row)"></el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</div>
+			
+			<el-dialog :title="$.t('org.selOrgMessage')" width="300px" top="10vh" :visible.sync="selectOrgDialog" :close-on-click-modal="false">
+				
+					<el-tree ref="orgTree" show-checkbox check-strictly :props="defaultProps" node-key="id"  :default-expanded-keys="[0]" :load="loadNode" lazy accordion @check-change="handleNodeClick"></el-tree>
+				
+				<div slot="footer" class="dialog-footer">
+					<el-button type="primary" @click="selectOrgConfirm()" data-i18n="common.confirm"></el-button>
+					<el-button @click="selectOrgDialog = false" data-i18n="common.cancel"></el-button>
+				</div>
+			</el-dialog>
+		</div>
+
+		<script src="../../js/manage/userRole.js"></script>
+	</body>
+
+</html>

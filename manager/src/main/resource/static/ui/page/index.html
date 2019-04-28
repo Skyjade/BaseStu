@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<title data-i18n="common.app_Title"></title>
+		<!--[if lt IE 8]>
+	    <meta http-equiv="refresh" content="0;ie.html" />
+	    <![endif]-->
+		<link rel="shortcut icon" href="../img/hxlogo.ico">
+		<link href="../css/all.css" rel="stylesheet">
+		<link href="../css/index.css" rel="stylesheet">
+		<script src="../js/libs/default.js"></script>
+		<script src="../js/all.js"></script>
+	</head>
+
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow-y:hidden;">
+		<div id="index" style="width: 100%;height: 100%;">
+			<!--左侧导航开始-->
+			<nav id="leftNav" class="navbar-default navbar-static-side" role="navigation">
+				<div class="sidebar-collapse">
+					<div class="nav">
+						<div class="nav-header">
+							<div class="profile-element">
+								<div class="index_logo"></div>
+							</div>
+						</div>
+						<div class="tree" style="position: absolute;top:49px;bottom:0;width: 100%;overflow: auto;">
+							<el-tree :data="menuList" :props="props" node-key="id" ref="tree" highlight-current accordion @node-click="handleNodeClick" :render-content="renderContent">
+							</el-tree>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<nav id="leftNavSmall" class="navbar-min">
+				<div class="sidebar-collapse">
+					<ul class="nav">
+						<li class="nav-header">
+							<div class="profile-element">
+								<div class="index_logo_small"></div>
+							</div>
+						</li>
+
+						<div class="indexLeftIcon" style="position: absolute;top: 50px;bottom: 0;width: 100%;">
+							<ul @click="indexLeftIconBtn()">
+								<li v-for="list in menuList">
+									<el-tooltip class="item" effect="dark" :content="list.name" placement="right">
+										<i v-bind:class="list.icon" style="font-size: 20px;color: #999999;"></i>
+									</el-tooltip>
+								</li>
+							</ul>
+						</div>
+					</ul>
+				</div>
+			</nav>
+			<!--左侧导航结束-->
+			<!--右侧部分开始-->
+			<div id="page-wrapper" class="gray-bg">
+				<div class="row border-bottom">
+					<nav class="navbar" role="navigation" style="background: #1e8bd8;height: 48px;overflow: hidden;">
+						<div class="t_left">
+							<i @click="smoothlyMenu()" class="fa fa-bars smoothMenu"></i>
+						</div>
+						<div class="index_appName t_left">
+							<span v-text="appName" style="color: white;font-weight: bold;"></span>
+						</div>
+						<div class="t_right mg_r15 userBox">
+							<i id="favoriteStar" class="fa fa-star font20 mg_r15" style="cursor: pointer;line-height: 48px;color: #ffffff;" @click="favoriteMenus"></i>
+							<div class="t_right" style="line-height: 48px;">
+								<el-popover placement="bottom" width="155" trigger="hover">
+									<ul class="userDown">
+										<li>
+											<div @click="myMessage()"><i class="fa fa-user"></i><span class="mg_l10" data-i18n="index.profile"></span></div>
+										</li>
+										<li>
+											<div @click="editPsw()"><i class="fa fa-lock"></i><span class="mg_l10" data-i18n="common.editPsw"></span></div>
+										</li>
+										<li>
+											<a @click="logOut" href="#"><i class="fa fa fa-sign-out"></i><span class="mg_l10" data-i18n="index.logOut"></span></a>
+										</li>
+									</ul>
+									<el-button slot="reference" style="background: transparent;border: none;color: white;">
+										<div id="userName" class="t_left ellipsis" style="color: white;font-weight: bold;max-width: 150px;"></div>
+										<div class="el-icon-arrow-down el-icon--right"></div>
+										<div class="clear"></div>
+									</el-button>
+								</el-popover>
+							</div>
+							<div class="t_right" style="width:50px;height:43px;line-height: 43px;padding:0 5px 0 15px">
+								<img style="width: auto;height: auto;max-width: 100%;max-height: 100%; " :src="imageUrl">
+							</div>
+							<!--<i class="fa fa-user font20 mg_l15 t_right" style="color: white;margin-right: 5px;line-height: 48px;"></i>-->
+							<i @click="screenBigbtn()" class="fa fa-arrows-alt font20 mg_l15 t_right" style="color: white;cursor: pointer;line-height: 48px;"></i>
+							<el-autocomplete size="mini" class="inline-input t_right" style="line-height: 48px;width: 230px;" v-model="searchMenuValue" :fetch-suggestions="querySearch" :placeholder="placeholderSearch" @select="handleSelect">
+							</el-autocomplete>
+						</div>
+						<div class="clear"></div>
+					</nav>
+				</div>
+				<div class="row content-tabs">
+					<button @click="J_tabLeft()" class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i></button>
+					<nav class="page-tabs J_menuTabs">
+						<div class="page-tabs-content">
+							<a href="javascript:;" class="J_menuTab active" data-id="" data-role="" data-i18n="index.homepage"></a>
+						</div>
+					</nav>
+					<button @click="J_tabRight()" class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i></button>
+					<div class="operateAll">
+						<el-dropdown @command="operateCommand">
+							<span class="el-dropdown-link">
+					       	<span data-i18n="common.operate"></span>
+							<i class="el-icon-arrow-down el-icon--right"></i>
+							</span>
+							<el-dropdown-menu slot="dropdown">
+								<el-dropdown-item command="a">
+									<a data-i18n="index.locateTab"></a>
+								</el-dropdown-item>
+								<el-dropdown-item command="b">
+									<a data-i18n="index.closeOtherTabs"></a>
+								</el-dropdown-item>
+								<el-dropdown-item command="c">
+									<a data-i18n="index.closeAllTabs"></a>
+								</el-dropdown-item>
+							</el-dropdown-menu>
+						</el-dropdown>
+					</div>
+					<a @click="refreshBtn()" class="roll-nav roll-right J_tabExit" href="javascript:;"><i class="fa fa fa-refresh"></i></a>
+				</div>
+				<div class="row J_mainContent" id="content-main">
+					<iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="" frameborder="0" data-id="" data-role="" seamless></iframe>
+				</div>
+				<div class="footer">
+					<div class="txt_center">
+						Copyright © 2018-2021 All Rights Reserved
+					</div>
+				</div>
+			</div>
+			<div id="myMessage">
+			</div>
+			<div id="editPassword">
+			</div>
+		</div>
+		<script type="application/javascript">
+			var favorMenusData = []; //全局变量收藏的所有菜单
+			var userName = "";
+		</script>
+		<script type="text/javascript" src="../js/libs/browser.min.js"></script>
+		<script type="text/babel" src="../js/index.js"></script>
+	</body>
+
+</html>

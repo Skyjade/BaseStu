@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Definition Detail</title>
+		<link href="css/all.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+		<style type="text/css">
+			.el-form-item {
+				margin-bottom: 0px;
+			}
+			
+			.el-form-item__label {
+				text-align: right;
+				float: left;
+				font-size: 14px;
+				color: #4C4C4C;
+				line-height: 40px;
+				padding: 0 12px 0 0;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="taskDetail" style="width: 100%; height: 100%;">
+			<div class="content_bg">
+				<div v-show="isComplete" class="t_left">
+					<el-button round size="small" icon="el-icon-edit" @click="openEditTaskDialog()"><span data-i18n="common.edit"></span></el-button>
+				</div>
+				<div v-show="isComplete" class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-edit" @click="openAssignTaskDialog(1)"><span data-i18n="task.appointedTask"></span></el-button>
+				</div>
+				<div v-show="isComplete" class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-check" @click="completeTask()"><span data-i18n="task.finishTask"></span></el-button>
+				</div>
+				<div v-show="!isComplete" class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-delete" @click="deleteTask()"><span data-i18n="common.delete"></span></el-button>
+				</div>
+				<div class="t_right">
+					<a href="tasks.html">
+						<el-button size="small" type="primary" icon="el-icon-back"><span data-i18n="common.return"></span></el-button>
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="content_bg mg_t15">
+				<div style="padding: 10px 0px;border-bottom: 1px solid #EEEEEE;">
+					<h3 style="line-height: 32px;" v-text="title"></h3>
+				</div>
+				<div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.id"></div>
+						<div class="rightText" v-text="task.id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.status"></div>
+						<div class="rightText" v-text="task.status"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.name"></div>
+						<div class="rightText" v-text="task.name"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.description"></div>
+						<div class="rightText" v-text="task.description"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.definitions"></div>
+						<div class="rightText" v-text="task.task_definition_key"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.key"></div>
+						<div class="rightText" v-text="task.form_key"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.priority"></div>
+						<div class="rightText" v-text="task.priority"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.delegationState">Delegation state:</div>
+						<div class="rightText" v-text=""></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.category">Category:</div>
+						<div class="rightText" v-text="task.category"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.parentTask"></div>
+						<div class="rightText" v-text="task.parent_task_id"></div>
+					</div>
+
+					<!--<div class="detailBox" style="width: 100%;">
+						<div class="leftText">Tenant:</div>
+						<div class="rightText" v-text="task.tenantId"></div>
+					</div>-->
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.assignee"></div>
+						<div class="rightText" v-text="task.assignee"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.owner"></div>
+						<div class="rightText" v-text="task.owner"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.startTime"></div>
+						<div class="rightText" v-text="task.start_time"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.dueDate"></div>
+						<div class="rightText" v-text="task.due_date"></div>
+					</div>
+
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.endTime"></div>
+						<div class="rightText" v-text="task.end_time"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.deleteReason"></div>
+						<div class="rightText" v-text="task.delete_reason"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.instances"></div>
+						<div class="rightText" v-text="task.process_instance_id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.executionID"></div>
+						<div class="rightText" v-text="task.execution_id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="task.definitions"></div>
+						<div class="rightText" v-text="task.process_definition_id"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+
+			<el-dialog :title="editTaskTitle" :visible.sync="editTaskDialog" width="400px" :close-on-click-modal="false">
+				<el-form :model="editTask" :inline="true" size="small" ref="editTask" label-width="100px" label-position="left">
+					<el-form-item :label="$.t('common.name')">
+						<el-input v-model.trim="editTask.name" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')">
+						<el-input v-model="editTask.description" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('task.assignee')">
+						<el-input v-model="editTask.assignee" style="width: 250px;" @focus="openAssignTaskDialog(2)"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('task.owner')">
+						<el-input v-model="editTask.owner" style="width: 250px;" @focus="openAssignTaskDialog(3)"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('task.dueDate')">
+						<el-date-picker v-model="editTask.dueDate" type="date" placeholder="" size="small" style="width: 250px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item :label="$.t('task.priority')">
+						<el-input v-model="editTask.priority" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.category')">
+						<el-input v-model="editTask.category" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="editTaskDialog = false" data-i18n="common.cancel"></el-button>
+					<el-button type="primary" @click="updateTask()" data-i18n="common.confirm"></el-button>
+				</div>
+			</el-dialog>
+
+			<el-dialog :title="assignTaskTitle" :visible.sync="assignTaskDialog" width="290px" :close-on-click-modal="false">
+				<div style="width:250px;">
+					<el-table border stripe :data="userList" height="300" highlight-current-row @selection-change="userSelectionChange">
+						<el-table-column type="selection" width="55">
+						</el-table-column>
+						<el-table-column prop="name" :label="$.t('common.name')" min-width="180" show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+				</div>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="assignTaskDialog = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" :disabled = "entrustBtn" @click = "updateCategory()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+		<script type="text/javascript" src="js/taskDetail.js"></script>
+	</body>
+
+</html>

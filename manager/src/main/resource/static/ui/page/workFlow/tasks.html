@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Instances</title>
+		<link href="css/all.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+		<style type="text/css">
+			.searchBox .date .el-input__icon {
+				height: 100%;
+				width: 25px;
+				text-align: center;
+				-webkit-transition: all .3s;
+				transition: all .3s;
+				line-height: 32px;
+			}
+			
+			.searchBox .date .el-input__inner {
+				-webkit-appearance: none;
+				background-color: rgb(255, 255, 255);
+				background-image: none;
+				box-sizing: border-box;
+				color: rgb(96, 98, 102);
+				display: inline-block;
+				font-size: inherit;
+				height: 32px;
+				line-height: 32px;
+				width: 100%;
+				border-radius: 4px;
+				border-width: 1px;
+				border-style: solid;
+				border-color: rgb(220, 223, 230);
+				border-image: initial;
+				outline: 0px;
+				padding: 0px 15px 0 30px;
+				transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="tasks" style="width: 100%;height: 100%;">
+			<div class="content_bg searchBox" style="padding-top: 5px;">
+				<div>
+					<div class="t_left mg_t10">
+						<div class="t_left" style="line-height: 35px;width: 150px;text-align: right;" data-i18n="common.status"></div>
+						<div class="t_left mg_l15">
+							<el-select size="small" v-model="status" @change="selectStatus()" style="width: 200px;">
+								<el-option value="0" :label="$.t('instance.anyStatus')"></el-option>
+								<el-option value="1" :label="$.t('instance.activeInstances')"></el-option>
+								<el-option value="2" :label="$.t('instance.completedInstances')"></el-option>
+							</el-select>
+						</div>
+						<div class="clear"></div>
+					</div>
+
+					<div class="t_left mg_t10">
+						<div class="t_left" style="line-height: 35px;width: 150px;text-align: right;" data-i18n="common.name"></div>
+						<div class="t_left mg_l15">
+							<el-input v-model="name" size="small" style="width: 200px;height: 32px;"></el-input>
+						</div>
+						<div class="clear"></div>
+					</div>
+
+					<div class="t_left mg_t10" style="width: 100%;">
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="common.createdTime"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker type="datetime" v-model="createtimeA" :placeholder="$.t('common.chooseDate')" style="width: 200px;height: 32px;">
+								</el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="common.to"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker type="datetime" v-model="createtimeB" :placeholder="$.t('common.chooseDate')" style="width: 200px;height: 32px;">
+								</el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="clear"></div>
+					</div>
+
+					<div class="t_left mg_t10" style="width: 100%;">
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="common.endTime"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker type="datetime" v-model="endtimeA" :placeholder="$.t('common.chooseDate')" style="width: 200px;height: 32px;">
+								</el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="common.to"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker type="datetime" v-model="endtimeB" :placeholder="$.t('common.chooseDate')" style="width: 200px;height: 32px;">
+								</el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="t_right">
+							<el-button class="t_right" size="small" type="primary" icon="el-icon-search" @click="searchBtn()"><span data-i18n="common.search"></span></el-button>
+							<div class="clear"></div>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="content_bg mg_t14" style="padding:10px 15px;">
+				<el-table border stripe :data="tasksList" highlight-current-row @row-click="openDetail">
+					<el-table-column prop="id" :label="$.t('common.id')" width="80" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="name" :label="$.t('common.name')" min-width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="assignee" :label="$.t('task.assignee')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="owner" :label="$.t('task.owner')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="start_time" :formatter="dateFormat" :label="$.t('common.createdTime')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="end_time" :formatter="dateFormat" :label="$.t('common.endTime')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="priority" :label="$.t('task.priority')" show-overflow-tooltip>
+					</el-table-column>
+				</el-table>
+				<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+					<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background :current-page="currentPage" :page-sizes="[10, 20, 30]" :page-size="10" layout="total, sizes, prev, pager, next, jumper" :total="total_count">
+					</el-pagination>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/tasks.js"></script>
+	</body>
+
+</html>

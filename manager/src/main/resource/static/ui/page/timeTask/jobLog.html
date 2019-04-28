@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="css/libs/element.css" rel="stylesheet">
+		<link href="css/default.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+	</head>
+
+	<body class="gray-bg">
+		<div id="jobLog" style="position: relative;width: 100%;height: 100%;">
+			<div class="content_bg leftBox tree" style="overflow: auto;">
+				<el-tree 
+					lazy 
+					:load="loadNode"
+					:props="props" 
+					node-key="no" 
+					ref="tree" 
+					highlight-current 
+					accordion 
+					@node-click="handleNodeClick">
+				</el-tree>
+			</div>
+			<div class="rightBox">
+				<div class="content_bg" style="height: 62px;">
+					<div class="t_left">
+						<el-select style="width:150px;height: 32px;" size="small" v-model="logState" slot="prepend" data-i18n="[placeholder]common.select" @change="selectState()">
+							<el-option :label="$.t('timeTask.all')" value="99"></el-option>
+							<el-option :label="$.t('timeTask.success')" value="S"></el-option>
+							<el-option :label="$.t('timeTask.fail')" value="F"></el-option>
+							<el-option :label="$.t('timeTask.miss')" value="M"></el-option>
+						</el-select>
+					</div>
+					<div class="t_right">
+						<el-button class="t_right" size="small" type="primary" icon="el-icon-refresh" @click="refreshBtn()"><span data-i18n="common.refresh"></span></el-button>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="content_bg mg_t14">
+					<div class="tableTitle">
+						<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+							<span data-i18n="timeTask.taskLogList"></span>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<el-table v-loading="listLoading" ref="jobLogList" stripe border :data="jobLogList" tooltip-effect="dark" style="width: 100%;">
+						<el-table-column prop="job_name" width="180" :label="$.t('timeTask.taskName')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="group_name" width="180" :label="$.t('timeTask.taskGroup')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="exec_result_no" width="120" :label="$.t('timeTask.result')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="exec_time" width="180" :label="$.t('timeTask.executionTime')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="exec_host_ip" width="180" :label="$.t('timeTask.hostIp')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="rest_param" width="180" :label="$.t('timeTask.restParam')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="error_reason" width="230" :label="$.t('timeTask.errorReason')" show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+					<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30]" layout="total,sizes, prev, pager, next,jumper" :total="total" background>
+						</el-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/jobLog.js"></script>
+	</body>
+
+</html>

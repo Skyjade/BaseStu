@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Processes Detail</title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+		<style type="text/css">
+			.el-form-item {
+				margin-bottom: 0px;
+			}
+			
+			.el-form-item__label {
+				text-align: right;
+				float: left;
+				font-size: 14px;
+				color: #4C4C4C;
+				line-height: 40px;
+				padding: 0 12px 0 0;
+				-webkit-box-sizing: border-box;
+				box-sizing: border-box;
+				font-weight: bold;
+			}
+			
+			iframe {
+				border-width: 0px;
+				border-style: none;
+				border-color: transparent;
+				border-image: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="processesDetail" style="width: 100%; height: 100%;">
+			<div class="content_bg">
+				<div class="t_left">
+					<el-button round size="small" icon="el-icon-edit" @click="openEditDialog()"><span data-i18n="common.edit"></span></el-button>
+				</div>
+				<div class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-delete" @click="deleteBtn()"><span data-i18n="common.delete"></span></el-button>
+				</div>
+				<div class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-edit" @click="openEditorBtn()"><span data-i18n="workFlow.openEditor"></span></el-button>
+				</div>
+				<div class="t_right">
+					<a href="processes.html">
+						<el-button size="small" type="primary" icon="el-icon-back"><span data-i18n="common.return"></span></el-button>
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="content_bg mg_t14">
+				<div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.version"></span>:</div>
+						<div class="rightText"><span>V</span><span v-text="processes.version"></span></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.name"></span>:</div>
+						<div class="rightText" v-text="processes.name"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.key"></span>:</div>
+						<div class="rightText" v-text="processes.key"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.createdBy"></span>:</div>
+						<div class="rightText" v-text="processes.createdBy"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.description"></span>:</div>
+						<div class="rightText" v-text="processes.description"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.lastUpdatedBy"></span>:</div>
+						<div class="rightText" v-text="processes.lastUpdatedBy"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="workFlow.lastUpdateTime"></span>:</div>
+						<div class="rightText" v-text="processes.lastUpdated"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="content_bg mg_t14">
+				<iframe frameborder="0" style="min-height:350px;width:100%;height:100%;" src="common/processesModel.html"></iframe>
+			</div>
+			<el-dialog :title="$.t('workFlow.editModel')" :visible.sync="editProcessDialog" width="420px" :close-on-click-modal="false">
+				<!--<div>Change any of the model properties below and then press Save to update the model.</div>-->
+				<el-form :model="model" :rules="rules" label-width="120px" label-position="left">
+					<el-form-item :label="$.t('workFlow.name')" prop="modelName">
+						<el-input v-model="model.modelName" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('workFlow.key')" prop="modelKey">
+						<el-input v-model="model.modelKey" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('workFlow.description')">
+						<el-input v-model="model.description" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="editProcessDialog = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "editModelSave()" data-i18n="common.save"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+		<script type="text/javascript" src="js/processesDetail.js"></script>
+		<script type="application/javascript">
+			function setId() {
+				var url = decodeURI(location.search); //获取url中"?"符后的字串 ('?modFlag=business&role=1')  
+				var theRequest = new Object();
+				if(url.indexOf("?") != -1) {
+					var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；  
+					var strs = str.split("&");
+					for(var i = 0; i < strs.length; i++) {
+						theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+					}
+				}
+				return theRequest.processesId;
+			}
+		</script>
+	</body>
+
+</html>

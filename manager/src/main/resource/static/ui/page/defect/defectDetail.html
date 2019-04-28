@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Defect Detail</title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="../../js/allSecond.js"></script>
+		<style type="text/css">
+			iframe {
+			    border-width: 0px;
+			    border-style: none;
+			    border-color: transparent;
+			    border-image: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="defectDetail" style="width: 100%; height: 100%;">
+			<div class="content_bg">
+				<div class="t_right">
+					<a href="defect.html">
+					    <el-button size="small" type="primary" icon="el-icon-back"><span data-i18n="common.return"></span></el-button>
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="content_bg mg_t14">
+				<div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.name"></span>:</div>
+						<div class="rightText"><span v-text="viewDefectData.equipment_name"></span></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.equipmentType"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.equipment_type"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.equipmentNo"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.equipment_no"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.type"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.type"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.discoverer"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.discoverer"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.discoverTime"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.discover_time"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.reporter"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.reporter"></div>
+					</div>
+						<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.reportTime"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.report_time"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.description"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.description"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText"><span data-i18n="defect.address"></span>:</div>
+						<div class="rightText" v-text="viewDefectData.address"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="content_bg mg_t14">
+				<iframe frameborder="0" style="min-height:350px;width:100%;height:100%;" src="../workFlow/common/defectFlowChart.html"></iframe>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/defect/defectDetail.js" ></script>
+		<script type="application/javascript">
+			function setData(){
+				var url = decodeURI(location.search); //获取url中"?"符后的字串 ('?modFlag=business&role=1')  
+				var theRequest = new Object();
+				if(url.indexOf("?") != -1) {
+					var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；  
+					var strs = str.split("&");
+					for(var i = 0; i < strs.length; i++) {
+						theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+					}
+				}
+				return JSON.parse(theRequest.obj);
+			}
+		</script>
+	</body>
+</html>

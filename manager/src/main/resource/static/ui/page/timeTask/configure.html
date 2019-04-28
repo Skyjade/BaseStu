@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="css/libs/element.css" rel="stylesheet">
+		<link href="css/default.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+	</head>
+
+	<body class="gray-bg">
+		<div id="configure" style="position: relative;width: 100%;height: 100%;">
+			<div class="leftBox content_bg tree" style="overflow: auto;">
+				<el-tree :data="jobGroupList" :props="props" node-key="id" highlight-current accordion @node-click="handleNodeClick">
+				</el-tree>
+			</div>
+			<div class="rightBox">
+				<div class="content_bg" style="height: 62px;">
+					<div class="t_left">
+						<el-button round size="small" icon="el-icon-view" @click="viewGroupBtn()"><span data-i18n="common.view"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button round size="small" icon="el-icon-plus" @click="openJobGroupBtn()"><span data-i18n="common.add"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button round size="small" icon="el-icon-edit" @click="editGroupBtn()"><span data-i18n="common.edit"></span></el-button>
+					</div>
+					<div class="t_left mg_l15">
+						<el-button round size="small" icon="el-icon-delete" @click="deleteGroupBtn()"><span data-i18n="common.delete"></span></el-button>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="content_bg mg_t14">
+					<div class="tableTitle">
+						<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+							<span data-i18n="timeTask.jobList"></span>
+						</div>
+						<div class="t_right">
+							<el-button round size="small" icon="el-icon-plus" @click="openJobAddDialog()"><span data-i18n="common.add"></span></el-button>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<el-table ref="jobList" stripe border :data="jobList" tooltip-effect="dark" style="width: 100%;">
+						<el-table-column prop="job_name" width="150" :label="$.t('timeTask.jobName')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="description" width="150" :label="$.t('common.description')" show-overflow-tooltip>
+						</el-table-column>
+						<!--<el-table-column prop="class_name" width="230" :label="$.t('timeTask.className')" show-overflow-tooltip>
+						</el-table-column>-->
+						<el-table-column prop="exec_host_ip" width="180" :label="$.t('timeTask.hostIp')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="uap_rest_api.name" width="180" :label="$.t('timeTask.restApi')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="insert_time" width="160" :label="$.t('timeTask.insertTime')" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column :label="$.t('common.operate')" min-width="100" fixed="right">
+							<template slot-scope="scope">
+								<el-tooltip class="item" effect="dark" :content="$.t('common.delete')" placement="top">
+									<el-button size="mini" type="danger" icon="el-icon-delete" circle @click="deleteJob(scope.$index, scope.row)"></el-button>
+								</el-tooltip>
+								<el-tooltip class="item" effect="dark" :content="$.t('common.edit')" placement="top">
+									<el-button size="mini" icon="el-icon-edit" circle @click="editJob(scope.$index, scope.row)"></el-button>
+								</el-tooltip>
+							</template>
+						</el-table-column>
+					</el-table>
+				</div>
+			</div>
+
+			<!--任务分组详情-->
+			<el-dialog :title="$.t('common.detail')" :visible.sync="viewJobGroupDialog" width="430px" :close-on-click-modal="false">
+				<el-form :inline="true" size="small" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.groupName')" label-width="120px">
+						<el-input v-model="selGroup.group_name" disabled style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.insertTime')" label-width="120px">
+						<el-input v-model="selGroup.insert_time" disabled style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="selGroup.description" disabled style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="viewJobGroupDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--新增任务分组-->
+			<el-dialog :title="$.t('common.add')" :visible.sync="addJobGroupDialog" width="430px" :close-on-click-modal="false">
+				<el-form :model="addGroupData" :inline="true" size="small" :rules="rules" ref="addGroupData" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.groupName')" prop="name" label-width="120px">
+						<el-input v-model.trim="addGroupData.name" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="addGroupData.description" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="addJobGroupDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="addJobGroupConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--编辑任务分组-->
+			<el-dialog :title="$.t('common.edit')" :visible.sync="editJobGroupDialog" width="430px" :close-on-click-modal="false">
+				<el-form :model="editGroupData" :inline="true" size="small" :rules="editRules" ref="editGroupData" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.groupName')" label-width="120px">
+						<el-input v-model="editGroupData.group_name" disabled style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="editGroupData.description" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="editJobGroupDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="editJobGroupConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--新增job-->
+			<el-dialog :title="$.t('common.add')" :visible.sync="addJobDialog" width="430px" top="5vh" :close-on-click-modal="false">
+				<el-form :model="addJobData" :inline="true" size="small" :rules="rulesJob" ref="addJobData" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.jobName')" prop="job_name" label-width="120px">
+						<el-input v-model.trim="addJobData.job_name" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.hostIp')" label-width="120px">
+						<el-select style="width:250px;" size="small" v-model="addJobData.exec_host_ip" data-i18n="[placeholder]common.select">
+							<el-option v-for="(index, list) in hostIp" :label="list" :value="index"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.restApi')" prop="restApi" label-width="120px">
+						<el-input v-model="addJobData.restApi" @focus="openApiDialog()" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.restParam')" prop="restParam" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="addJobData.restParam" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="addJobData.description" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">      
+					<el-button @click="testApi(addJobData.restApiID,addJobData.restParam)" style="float:left" data-i18n="timeTask.testApi"></el-button>
+	                <el-button @click="addJobDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="addJobConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--编辑job-->
+			<el-dialog :title="$.t('common.edit')" :visible.sync="editJobDialog" width="430px" :close-on-click-modal="false">
+				<el-form :model="editJobData" :inline="true" size="small" ref="editJobData" :rules="rulesJob" class="demo-ruleForm">
+					<el-form-item :label="$.t('timeTask.jobName')" prop="job_name" label-width="120px">
+						<el-input v-model="editJobData.job_name" disabled style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.hostIp')" label-width="120px">
+						<el-select style="width:250px;" size="small" v-model="editJobData.exec_host_ip" data-i18n="[placeholder]common.select">
+							<el-option v-for="(index, list) in hostIp" :label="list" :value="index"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.restApi')" prop="restApi" label-width="120px">
+						<el-input v-model="editJobData.restApi" @focus="openApiDialog()" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('timeTask.restParam')" prop="restParam" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="editJobData.restParam" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.description')" prop="description" label-width="120px">
+						<el-input type="textarea" :rows="3" v-model="editJobData.description" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">  
+					<el-button @click="testApi(editJobData.restApiID,editJobData.restParam)" style="float:left" data-i18n="timeTask.testApi"></el-button>             
+	                <el-button @click="editJobDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="editJobConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--接口-->
+			<el-dialog :title="$.t('timeTask.api')" :visible.sync="apiDialog" width="750px" top="5vh" :close-on-click-modal="false">
+				<div>
+					<div class="t_left">
+						<el-select size="small" v-model="searchAppID" style="width: 200px;" @change="selectApp()">
+							<el-option v-for="list in appList" :label="list.name" :value="list.id">
+							</el-option>
+						</el-select>
+					</div>
+					<div class="t_left mg_l10">
+						<el-input style="width:300px;height: 32px;" data-i18n="[placeholder]common.inputName" v-model.trim="searchApiName" size="small" @keyup.enter.native="searchApi" clearable></el-input>
+					</div>
+					<div class="t_right mg_l15">
+						<el-button size="small" type="primary" icon="el-icon-search" @click="searchApi()"><span data-i18n="common.search"></span></el-button>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<div class="mg_t15">
+					<el-table border stripe :data="apiList" style="width: 100%;" max-height="300" @selection-change="handleSelectionChange">
+						<el-table-column prop="checked" type="selection"></el-table-column>
+						<el-table-column prop="name" :label="$.t('common.name')" min-width="80" show-overflow-tooltip>
+						</el-table-column>
+						<el-table-column prop="url" label="URL" min-width="100" show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+					<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+						<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background :current-page="currentPage" :page-sizes="[10, 20, 30]" :page-size="page_size" layout="total, sizes, prev, pager, next" :total="total_count">
+						</el-pagination>
+					</div>
+				</div>
+				<span slot="footer" class="dialog-footer">             
+	                <el-button @click="apiDialog = false" data-i18n="common.cancel"></el-button>
+	                <el-button type="primary" @click="apiConfirm()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+
+		<script src="js/configure.js"></script>
+	</body>
+
+</html>

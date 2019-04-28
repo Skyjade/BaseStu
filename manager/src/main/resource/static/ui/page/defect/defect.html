@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>defect</title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="../../js/allSecond.js"></script>
+		<style>
+			.el-dialog__wrapper {
+			    position: fixed;
+			    top: -50px;
+			    right: 0;
+			    bottom: 0;
+			    left: 0;
+			    overflow: auto;
+			    margin: 0;
+			}
+		</style>	
+	</head>
+	<body>
+		<div id="defect" style="width: 100%; height: 100%;">
+			<!--<div class="content_bg" style="height: 62px;">
+	    		<div class="t_left">
+	    			<el-select style="width:150px;height: 32px;" size="small" v-model="chooseState" slot="prepend" data-i18n="[placeholder]common.select" @change="selectState()">
+						<el-option v-for="list in stateOptions" :label="list.text" :value="list.code">
+						</el-option>
+					</el-select>
+				</div>
+	    		<div class="t_left mg_l10">
+	    			<el-input style="width:300px;height: 32px;" data-i18n="[placeholder]common.inputName" v-model="searchName" size="small" @keyup.enter.native="searchApp" clearable></el-input>
+	    		</div>
+			    <div class="t_right mg_l15">
+	    			<el-button size="small" type="primary" icon="el-icon-search" @click="searchApp()"><span data-i18n="common.search"></span></el-button>
+	    		</div>
+	    		<div class="clear"></div>
+			</div>-->
+			<div class="content_bg">
+				<div style="height: 55px;">
+					<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+		    			<span data-i18n="common.defectTitle"></span>
+		    		</div>
+					<div class="t_right">
+						<el-button round size="small" icon="el-icon-document" @click="openAddDialog()" :disabled="addDisabled"><span data-i18n="common.add"></span></el-button>
+						<el-button round size="small" icon="el-icon-upload2" @click="submitDefect()" :disabled="submitDisabled"><span data-i18n="common.submit"></span></el-button>
+						<!--<el-button round size="small" icon="el-icon-document" @click="auditDefect()" :disabled="auditDisabled"><span data-i18n="common.audit"></span></el-button>-->
+					</div>
+					<div class="clear"></div>
+				</div>
+				<el-table border stripe :data="defectDataList" style="width: 100%;" @selection-change="handleSelectionChange" @row-click="openDetail">
+				    <el-table-column prop="checked" type="selection" @selection-change="handleSelectionChange"></el-table-column>
+					<el-table-column prop="equipment_name" :label="$.t('defect.name')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="equipment_type" :label="$.t('defect.equipmentType')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="equipment_no" :label="$.t('defect.equipmentNo')" width="80" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="type" :label="$.t('defect.type')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<!--<el-table-column prop="description" :label="$.t('defect.description')" width="180" show-overflow-tooltip>
+					</el-table-column>-->
+					<el-table-column prop="discoverer" :label="$.t('defect.discoverer')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<!--<el-table-column prop="discover_time" :label="$.t('defect.discoverTime')" width="180" show-overflow-tooltip>
+					</el-table-column>-->
+					<el-table-column prop="reporter" :label="$.t('defect.reporter')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<!--<el-table-column prop="report_time" :label="$.t('defect.reportTime')" width="120" show-overflow-tooltip>
+					</el-table-column>-->
+					<el-table-column prop="address" :label="$.t('defect.address')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="stateNo" :label="$.t('common.status')" show-overflow-tooltip>
+					</el-table-column>
+				</el-table>
+				<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+					<el-pagination 
+						@size-change="handleSizeChange" 
+						@current-change="handleCurrentChange" 
+						background 
+						:current-page="currentPage" 
+						:page-sizes="[10, 20, 30]" 
+						:page-size="page_size"
+						layout="total, sizes, prev, pager, next, jumper" 
+						:total="total_count">
+					</el-pagination>
+				</div>
+			</div>
+			
+			
+			<!--新增缺陷弹框-->
+			<el-dialog :title="$.t('common.add')" :visible.sync="addDefectDialog" width="720px" :close-on-click-modal="false">
+				<el-form :model="addDefectData" :inline="true" size="small" ref="addDefectForm" class="demo-ruleForm">
+					<el-form-item :label="$.t('defect.name')" label-width="100px">
+						<el-input v-model="addDefectData.equipment_name" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.equipmentType')" label-width="140px">
+						<el-select size="small" v-model="addDefectData.equipment_type" style="width: 200px;" data-i18n="[placeholder]common.select">
+							<el-option v-for="list in typeOptions1" :label="list.text" :value="list.code">
+							</el-option>
+						</el-select>
+					</el-form-item>
+
+					<el-form-item :label="$.t('defect.equipmentNo')" label-width="100px">
+						<el-input v-model="addDefectData.equipment_no" style="width: 200px;"></el-input>
+					</el-form-item>
+					
+					<el-form-item :label="$.t('defect.type')" label-width="140px">
+						<el-select size="small" v-model="addDefectData.type" style="width: 200px;" data-i18n="[placeholder]common.select">
+							<el-option v-for="list in typeOptions" :label="list.text" :value="list.code">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.discoverer')" label-width="100px">
+						<el-input v-model="addDefectData.discoverer" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.discoverTime')" label-width="140px">
+						 <div class="block">
+						    <el-date-picker
+						      v-model="addDefectData.discover_time"
+						      type="datetime"
+						      :placeholder="$.t('common.chooseDate')"
+						      style="width: 200px;">
+						    </el-date-picker>
+						  </div>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.description')" label-width="100px">
+						<el-input v-model="addDefectData.description" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.reportTime')" label-width="140px">
+						 <div class="block">
+						    <el-date-picker
+						      v-model="addDefectData.report_time"
+						      type="datetime"
+						      :placeholder="$.t('common.chooseDate')"
+						      style="width: 200px;">
+						    </el-date-picker>
+						  </div>
+						<!--<el-input v-model="addDefectData.report_time" style="width: 200px;"></el-input>-->
+					</el-form-item>
+					
+					<el-form-item :label="$.t('defect.address')" label-width="100px">
+						<el-input v-model="addDefectData.address" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+				</el-form>
+
+				<span slot="footer" class="dialog-footer">             
+	                <el-button type="primary" @click="addDefectConfirm()" data-i18n="common.confirm"></el-button>
+					<!--<el-button type="primary" @click="submitDefect()" data-i18n="common.submit"></el-button>-->
+	                <el-button @click="addDefectDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+			
+			<!--审核缺陷弹框-->
+			<el-dialog :title="$.t('common.audit')" :visible.sync="auditDefectDialog" width="720px" :close-on-click-modal="false">
+				<el-form :model="auditDefectData" :inline="true" size="small" class="demo-ruleForm">
+					<el-form-item :label="$.t('defect.name')" label-width="100px">
+						<el-input v-model="auditDefectData.equipment_name" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.equipmentType')" label-width="140px">
+						<el-input v-model="auditDefectData.equipment_type" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+
+					<el-form-item :label="$.t('defect.equipmentNo')" label-width="100px">
+						<el-input v-model="auditDefectData.equipment_no" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					
+					<el-form-item :label="$.t('defect.type')" label-width="140px">
+						<el-input v-model="auditDefectData.type" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.discoverer')" label-width="100px">
+						<el-input v-model="auditDefectData.discoverer" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.discoverTime')" label-width="140px">
+						<el-input v-model="auditDefectData.discover_time" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+
+					<el-form-item :label="$.t('defect.reporter')" label-width="100px">
+						<el-input v-model="auditDefectData.reporter" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.reportTime')" label-width="140px">
+						<el-input v-model="auditDefectData.report_time" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					
+					<el-form-item :label="$.t('defect.description')" label-width="100px">
+						<el-input v-model="auditDefectData.description" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.address')" label-width="140px">
+						<el-input v-model="auditDefectData.address" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+					
+					<div style="width: 100%;height: 1px;background: #dddddd;margin-bottom: 10px;"></div>
+					<el-form-item :label="$.t('defect.auditor')" label-width="100px">
+						<el-input v-model="auditDefectData.description" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.opinion')" label-width="140px">
+						<el-input v-model="auditDefectData.handle_suggestion" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('defect.result')" label-width="100px">
+						<el-input v-model="auditDefectData.handle_result" style="width: 200px;"></el-input>
+					</el-form-item>
+					
+				</el-form>
+
+				<span slot="footer" class="dialog-footer">             
+	                <el-button type="primary" @click="auditDefectConfirm()" data-i18n="common.confirm"></el-button>
+	                <el-button @click="auditDefectDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+			
+		</div>
+
+	</body>
+	<script type="text/javascript" src="../../js/defect/defect.js" ></script>
+</html>

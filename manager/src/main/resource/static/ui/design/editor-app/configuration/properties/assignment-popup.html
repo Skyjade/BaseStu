@@ -1,0 +1,954 @@
+<div class="modal" ng-controller="FlowableAssignmentPopupCtrl">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
+				<div translate style="font-size: 20px;">PROPERTY.ASSIGNMENT.TITLE</div>
+			</div>
+			<div class="modal-body">
+				<div class="detail-group clearfix">
+
+					<div class="form-group clearfix">
+						<div class="col-xs-12">
+							<label class="col-xs-4">{{'PROPERTY.ASSIGNMENT.TYPE' | translate}}</label>
+
+							<div class="col-xs-8">
+								<div class="btn-group btn-group-justified">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default" ng-click="popup.assignmentObject.type = 'idm'" ng-model="popup.assignmentObject.type" ng-class="{'active' : popup.assignmentObject.type == 'idm'}">
+                                            {{'PROPERTY.ASSIGNMENT.TYPE.IDENTITYSTORE' | translate}}
+                                        </button>
+									</div>
+									<div class="btn-group">
+										<button type="button" class="btn btn-default" ng-click="popup.assignmentObject.type = 'static'" ng-model="popup.assignmentObject.type" ng-class="{'active' : popup.assignmentObject.type != 'idm'}">
+                                            {{'PROPERTY.ASSIGNMENT.TYPE.STATIC' | translate}}
+                                        </button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type != 'idm'">
+						<div class="col-xs-12">
+							<label>{{'PROPERTY.ASSIGNMENT.ASSIGNEE' | translate}}</label>
+						</div>
+						<div class="col-xs-12">
+							<input type="text" id="assigneeField" class="form-control" ng-model="popup.assignmentObject.static.assignee" placeholder="{{'PROPERTY.ASSIGNMENT.ASSIGNEE_PLACEHOLDER' | translate}}" />
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type != 'idm'">
+						<div class="col-xs-12">
+							<label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_USERS' | translate}}</label>
+						</div>
+						<div class="col-xs-12" ng-repeat="candidateUser in popup.assignmentObject.static.candidateUsers">
+							<input id="userField" class="form-control" type="text" ng-model="candidateUser.value" />
+							<i ng-if="popup.assignmentObject.static.candidateUsers.length >1" class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateUserValue($index)"></i>
+							<i ng-if="$index == (popup.assignmentObject.static.candidateUsers.length - 1)" class="glyphicon glyphicon-plus clickable-property" ng-click="addCandidateUserValue($index)"></i>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type != 'idm'">
+						<div class="col-xs-12">
+							<label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS' | translate}}</label>
+						</div>
+						<div class="col-xs-12" ng-repeat="candidateGroup in popup.assignmentObject.static.candidateGroups">
+							<input id="groupField" class="form-control" type="text" ng-model="candidateGroup.value" />
+							<i ng-if="popup.assignmentObject.static.candidateGroups.length >1" class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateGroupValue($index)"></i>
+							<i ng-if="$index == (popup.assignmentObject.static.candidateGroups.length - 1)" class="glyphicon glyphicon-plus clickable-property" ng-click="addCandidateGroupValue($index)"></i>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type == 'idm'">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.IDM.TYPE' | translate}}</label>
+							</div>
+							<div class="col-xs-8">
+								<div class="btn-group span">
+									<button class="selection" ng-options="option as (option.title | translate) for option in assignmentOptions" bs-select ng-model="assignmentOption" activiti-fix-dropdown-bug>
+                                    </button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type == 'idm' && assignmentOption.id == 'users'">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_USERS' | translate}}</label>
+							</div>
+							<div class="col-xs-8 clearfix">
+								<!--<ul class="simple-list" ng-show="popup.assignmentObject.idm.candidateUsers.length || popup.assignmentObject.idm.candidateUserFields.length">
+									<li ng-repeat="user in popup.assignmentObject.idm.candidateUsers">
+										<i class="icon icon-user"></i>
+										<span user-name="user" ng-bind="user.full_name"></span>
+
+										<div class="actions">
+											<a ng-click="removeCandidateUser(user)"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>
+									<li ng-repeat="userField in popup.assignmentObject.idm.candidateUserFields">
+										<i class="icon icon-user"></i>
+										<span>{{userField.name}}</span>
+										<span class="field-type"> - {{userFieldField.id}}</span>
+
+										<div class="actions">
+											<a ng-click="removeCandidateUserField(userField)"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>
+								</ul>-->
+								<ul class="simple-list" id="userDialogList" style="max-height: 100px;overflow-y: auto;">
+									
+								</ul>
+								<!--<div class="no-results" ng-if="(!popup.assignmentObject.idm.candidateUsers || !popup.assignmentObject.idm.candidateUsers.length) && (!popup.assignmentObject.idm.candidateUserFields || !popup.assignmentObject.idm.candidateUserFields.length)">
+									{{'PROPERTY.ASSIGNMENT.IDM.NO_CANDIDATE_USERS' | translate}}
+								</div>-->
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type == 'idm' && assignmentOption.id == 'groups'">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.CANDIDATE_GROUPS' | translate}}</label>
+							</div>
+							<div class="col-xs-8 clearfix">
+								<!--<ul class="simple-list" ng-show="popup.assignmentObject.idm.candidateGroups.length || popup.assignmentObject.idm.candidateGroupFields.length">
+									<li ng-repeat="group in popup.assignmentObject.idm.candidateGroups">
+										{{group.name}}
+										<div class="actions">
+											<a ng-click="removeCandidateGroup(group)"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>
+									<li ng-repeat="groupField in popup.assignmentObject.idm.candidateGroupFields">
+										{{groupField.name}}
+										<div class="actions">
+											<a ng-click="removeCandidateGroupField(groupField)"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>
+								</ul>
+								<div class="no-results" ng-if="(!popup.assignmentObject.idm.candidateGroups || !popup.assignmentObject.idm.candidateGroups.length) && (!popup.assignmentObject.idm.candidateGroupFields || !popup.assignmentObject.idm.candidateGroupFields.length)">
+									{{'PROPERTY.ASSIGNMENT.IDM.NO_CANDIDATE_GROUPS' | translate}}
+								</div>-->
+								<ul class="simple-list" id = "groupList" style="max-height: 100px;overflow-y: auto;">
+									
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-show="popup.assignmentObject.type == 'idm' && assignmentOption.id == 'user'">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.ASSIGNEE' | translate}}</label>
+							</div>
+							<div class="col-xs-8">
+								<!--<label ng-if="!popup.assignmentObject.idm.assignee && !popup.assignmentObject.idm.assigneeField">{{'PROPERTY.ASSIGNMENT.NONE' | translate}}</label>-->
+								<!--<ul class="simple-list" ng-if="popup.assignmentObject.idm.assignee || popup.assignmentObject.idm.assigneeField">
+									<li>
+										<i class="icon icon-user"></i>
+										<span ng-if="popup.assignmentObject.idm.assignee" user-name="popup.assignmentObject.idm.assignee" ng-bind="popup.assignmentObject.idm.assignee.full_name"></span>
+										<span ng-if="popup.assignmentObject.idm.assigneeField">{{popup.assignmentObject.idm.assigneeField.name}}</span>
+										<span ng-if="popup.assignmentObject.idm.assigneeField" class="field-type"> - {{popup.assignmentObject.idm.assigneeField.id}}</span>
+
+										<div class="actions" ng-if="popup.assignmentObject.idm.assignee || popup.assignmentObject.idm.assigneeField">
+											<a ng-click="removeAssignee()"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>
+								</ul>-->
+								
+								<ul class="simple-list" id="userOneList">
+									<!--<li>
+										<i class="icon icon-user"></i>
+										<span id="user_full_name"></span>
+
+										<div class="actions">
+											<a id="userRemove"><i class="icon icon-remove"></i></a>
+										</div>
+									</li>-->
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group clearfix" ng-if="popup.assignmentObject.type == 'idm' && (!popup.assignmentObject.assignmentSourceType || popup.assignmentObject.assignmentSourceType == 'search') && (assignmentOption.id == 'user' || assignmentOption.id == 'users')">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.SEARCH' | translate}}</label>
+							</div>
+							<div class="col-xs-8">
+								<input ng-click="openUserDialog()" class="form-control" type="text" id="people-select-input" placeholder="{{'PROPERTY.ASSIGNMENT.PLACEHOLDER-SEARCHUSER' | translate}}" auto-focus custom-keys />
+								<!--<input class="form-control" type="text" id="people-select-input" placeholder="{{'PROPERTY.ASSIGNMENT.PLACEHOLDER-SEARCHUSER' | translate}}" auto-focus custom-keys up-pressed="previousUser()" down-pressed="nextUser()" enter-pressed="confirmUser()" delayed-model="popup.filter" delay="200" />-->
+							</div>
+						</div>
+						<!--<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label></label>
+							</div>
+							<div class="col-xs-8">
+								<div class="subtle" style="margin: 2px 0 2px 0">
+									<span translate="PROPERTY.ASSIGNMENT.MATCHING"></span>
+								</div>
+							</div>
+						</div>
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label></label>
+							</div>
+							<div class="col-xs-8">
+								<div class="inline-people-select">
+									<ul class="simple-list">
+										<li ng-click="confirmUser(user)" ng-repeat="user in popup.userResults" ng-class="{'active': $index == popup.selectedIndex}">
+											<div user-picture="user" user-index="$index" user-name="user" ng-bind="user.full_name"></div>
+										</li>
+									</ul>
+									<div class="nothing-to-see" translate="GENERAL.MESSAGE.PEOPLE-NO-MATCHING-RESULTS" ng-show="popup.userResults.length == 0"></div>
+								</div>
+							</div>
+						</div>-->
+					</div>
+
+					<div class="form-group clearfix" ng-if="popup.assignmentObject.type == 'idm' && (!popup.assignmentObject.assignmentSourceType || popup.assignmentObject.assignmentSourceType == 'search') && assignmentOption.id == 'groups'">
+						<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label>{{'PROPERTY.ASSIGNMENT.SEARCH' | translate}}</label>
+							</div>
+							<div class="col-xs-8">
+								<input ng-click="openRoleDialog()" class="form-control" type="text" id="people-select-input" placeholder="{{'PROPERTY.ASSIGNMENT.PLACEHOLDER-SEARCHGROUP' | translate}}" auto-focus custom-keys />
+								<!--<input class="form-control" type="text" id="people-select-input" placeholder="{{'PROPERTY.ASSIGNMENT.PLACEHOLDER-SEARCHGROUP' | translate}}" auto-focus custom-keys up-pressed="previousGroup()" down-pressed="nextGroup()" enter-pressed="confirmGroup()" delayed-model="popup.groupFilter" delay="200" />-->
+							</div>
+						</div>
+						<!--<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label></label>
+							</div>
+							<div class="col-xs-8">
+								<div class="subtle">
+									<span translate="PROPERTY.ASSIGNMENT.MATCHING"></span>
+								</div>
+							</div>
+						</div>-->
+						<!--<div class="col-xs-12">
+							<div class="col-xs-4">
+								<label></label>
+							</div>
+							<div class="col-xs-8">
+								<div class="inline-people-select">
+									<ul class="simple-list">
+										<li ng-click="confirmGroup(group);" ng-repeat="group in popup.groupResults" ng-class="{'active': $index == popup.selectedGroupIndex}">
+											{{group.name}}
+										</li>
+									</ul>
+									<div class="nothing-to-see" translate="GENERAL.MESSAGE.GROUP-NO-MATCHING-RESULTS" ng-show="popup.groupResults.length == 0"></div>
+								</div>
+							</div>
+						</div>-->
+					</div>
+
+					<div class="form-group clearfix">
+						<div class="col-xs-12">
+							<div class="col-xs-12">
+								<label>
+                                    <input type="checkbox" ng-model="assignment.initiatorCanCompleteTask">
+                                    &nbsp;{{'PROPERTY.ASSIGNMENT.INITIATOR-CAN-COMPLETE' | translate}}
+                                </label>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button ng-click="close()" class="btn btn-primary" translate>ACTION.CANCEL</button>
+				<button ng-click="save()" class="btn btn-primary" translate>ACTION.SAVE</button>
+			</div>
+
+		</div>
+	</div>
+	<div ng-if="userSelectDialog" class="userSelect">
+		<div id="userDialog">
+			<el-dialog :title="lang.user" :show-close="isShowDialog" :visible.sync="dialogUser" width="850px" top="5vh" :modal="modal">
+				<div style="height: 450px;width: 100%;position: relative;">
+					<div class="leftBox content_bg tree" style="overflow-y: auto;">
+						<div class="mg_b15">
+							<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;"><span v-text="lang.org"></span></div>
+							<div class="clear"></div>
+						</div>
+						<el-tree ref="baseOrgTree" accordion node-key="id" :load="loadLeftTreeNode" :highlight-current="highlight" lazy :props="defaultProps" @node-click="handleLeftTreeNodeClick"></el-tree>
+					</div>
+
+					<div class="rightBox" style="overflow-y: auto;">
+						<div>
+							<div class="content_bg" style="height: 62px;">
+								<div class="t_left mg_l10">
+									<el-input v-model.trim="searchInput" size="small" style="width:200px;height: 32px;" clearable :placeholder="lang.inputName" @keyup.enter.native="searchUser()"></el-input>
+								</div>
+								<div class="t_right">
+									<el-button size="small" type="primary" icon="el-icon-search" @click="searchUser()"><span v-text="lang.search"></span></el-button>
+								</div>
+								<div class="clear"></div>
+							</div>
+							<div class="content_bg mg_t14">
+								<div class="tableTitle">
+									<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+										<span v-text="lang.userlist"></span>
+									</div>
+									<div class="clear"></div>
+								</div>
+								<el-table ref="userListTable" stripe border :data="userListData" tooltip-effect="dark" height="240" style="width: 100%;" @selection-change="handleSelectionChange">
+									<el-table-column type="selection" width="50">
+									</el-table-column>
+									<el-table-column prop="no" min-width="120" :label="lang.no" show-overflow-tooltip>
+									</el-table-column>
+									<el-table-column prop="name" min-width="120" :label="lang.name" show-overflow-tooltip>
+									</el-table-column>
+									<el-table-column prop="phone" width="160" :label="lang.phone" show-overflow-tooltip>
+									</el-table-column>
+								</el-table>
+								<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+									<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30]" layout="total,sizes, prev, pager, next,jumper" :total="total" background>
+									</el-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<span slot="footer" class="dialog-footer">
+				    <el-button @click="cancelUserDialog()"><span v-text ="lang.cancel"></span></el-button>
+				    <el-button type="primary" @click="confirmUserDialog()"><span v-text ="lang.confirm"></span></el-button>
+				  </span>
+			</el-dialog>
+		</div>
+		<script type="application/javascript">
+			new Vue({
+				el: '#userDialog',
+				data: function() {
+					return {
+						lang:{
+							user:"",
+							org:"",
+							search:"",
+							inputName:"",
+							userlist:"",
+							no:"",
+							name:"",
+							phone:"",
+							confirm:"",
+							cancel:"",
+							selOrgMessageOne:""
+						},
+						modal:false,
+						dialogUser: true,
+						selBaseOrgNode: "", //选择的基准组织节点
+						defaultProps: {
+							children: 'children',
+							label: 'name',
+							isLeaf: 'is_leaf',
+							id: 'id',
+						},
+						userListData: [], //表格中的用户数据
+						currentPage: 1, //当前页
+						pageSize: 10, //每页显示多少条
+						total: 0, //总条数	
+						baseOrgID: "", //左侧树节点基准组织ID
+						searchInput: "", //条件查询时input输入的内容
+						highlight: true, //树高亮显示选中
+						isShowDialog:false,
+						selList:[]
+					}
+				},
+				created: function() {
+					this.langFn();
+					this.getUsers(this.currentPage, this.pageSize);
+				},
+				methods: {
+					langFn:function(){
+						this.lang.user = USER_ROLE.user;
+						this.lang.org = USER_ROLE.org;
+						this.lang.search = USER_ROLE.search;
+						this.lang.inputName = USER_ROLE.inputName;
+						this.lang.userlist = USER_ROLE.userlist;
+						this.lang.no = USER_ROLE.no;
+						this.lang.name = USER_ROLE.name;
+						this.lang.phone = USER_ROLE.phone;
+						this.lang.confirm = USER_ROLE.confirm;
+						this.lang.cancel = USER_ROLE.cancel;
+						this.lang.selOrgMessageOne = USER_ROLE.selOrgMessageOne;
+					},
+					//表格单选
+					handleSelectionChange: function(val) {
+						this.selList = val;
+					},
+					//左侧树懒加载方法
+					loadLeftTreeNode: function(node, resolve) {
+						if(node.level === 0) {
+							this.getOrgTree(this.selBaseOrgNode, function(data) {
+								return resolve(data);
+							});
+						}
+						if(node.level > 0) {
+							this.getOrgTree(node.data, function(data) {
+								return resolve(data);
+							});
+						}
+					},
+					//左侧树节点点击事件
+					handleLeftTreeNodeClick: function(data) {
+						this.highlight = true;
+						this.getOrgTree(data, function(data) {});
+						this.selBaseOrgNode = data;
+						this.baseOrgID = data.id;
+						this.currentPage = 1;
+						this.getUsers(this.currentPage, this.pageSize);
+					},
+
+					//树形结构获取组织数据
+					getOrgTree: function(selNode, success) {
+						var httpUrl = "/uap/org/sublist";
+						var tree = [];
+						var data = {};
+						data.state = "1";
+						if(selNode != "") {
+							data.parent_id = selNode.id;
+						}
+						var This = this;
+						HTTP.httpPost(This, httpUrl, data, function(res) {
+							var data = res.data;
+							var rowObj = [];
+							if(data.length > 0) {
+								var rowObj = [];
+								for(var i = 0; i < data.length; i++) {
+									var rowItem = data[i];
+									if(rowItem.is_leaf == 1) {
+										rowItem.is_leaf = true;
+									} else {
+										rowItem.is_leaf = false;
+									}
+									rowObj.push(rowItem);
+								}
+								tree = rowObj;
+							}
+							success(tree);
+						});
+					},
+
+					/**
+					 * 获取用户列表
+					 * pageNum 页码
+					 * showNum 一页展示的个数
+					 */
+					getUsers: function(pageNum, showNum) {
+						var httpUrl = "/uap/user/list";
+						this.userListData = [];
+						var data = {};
+						data.app_id = Common.getUserInfo().app_id;
+						data.start = (pageNum - 1) * showNum;
+						data.limit = showNum;
+						if(this.baseOrgID != "") {
+							data.org_id = this.baseOrgID;
+						}
+						if(this.searchInput != "") {
+							data.name = this.searchInput;
+						}
+						var This = this;
+						HTTP.httpPost(This, httpUrl, data, function(res) {
+							This.total = res.total;
+							var res = res.data;
+							var row = [];
+							if(res.length>0){
+								for(var i=0;i<res.length;i++){
+									var rowItem = res[i];
+									rowItem.first_name = rowItem.name+"("+rowItem.no+")";
+									rowItem.full_name = rowItem.name+"("+rowItem.no+")"+"-"+rowItem.uap_organization.name;
+									rowItem.last_name = rowItem.uap_organization.name;
+									row.push(rowItem);
+								}
+								This.userListData = res;
+							}
+						});
+					},
+					//每页多少条处理函数
+					handleSizeChange: function(val) {
+						this.pageSize = val;
+						this.currentPage = 1;
+						this.getUsers(this.currentPage, this.pageSize);
+					},
+					//当前页数据展示
+					handleCurrentChange: function(val) {
+						this.currentPage = val;
+						this.getUsers(this.currentPage, this.pageSize);
+					},
+					//根据条件查询用户数据
+					searchUser: function() {
+						this.currentPage = 1;
+						this.getUsers(this.currentPage, this.pageSize);
+					},
+
+					cancelUserDialog: function() {
+						jQuery(".userSelect").addClass("undis");
+					},
+					confirmUserDialog:function(){
+						if(userType == "user"){
+							if(this.selList.length >1){
+								alert(this.lang.selOrgMessageOne)
+							}else{
+								selUserOne = this.selList;
+								var elem = document.getElementById("userOneList");
+							    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+							    {
+							        elem.removeChild(elem.firstChild);
+							    }
+								for(var n = 0;n < selUserOne.length;n++){
+									var name = selUserOne[0].full_name;
+									var items='<li>'
+									items+='<i class="icon icon-user"></i>'
+		　　　　						items+='<span>'+name+'</span>'
+									items+='<div class="actions">'
+									items+='<a>'
+									items+='<i class="icon icon-remove" onclick="removeUserOne()"></i>'
+									items+='</a>'
+									items+='</div>'
+									items+='</li>'
+									jQuery("#userOneList").append(items);
+								}
+								jQuery(".userSelect").addClass("undis");
+							}
+						}
+						
+						if(userType == "users"){
+							//去除已经选择的
+							if(selUser.length > 0){
+								if(this.selList.length > 0){
+									var flag = true;
+									for(var i = 0;i < this.selList.length;i++){
+									    flag = true;
+									    for(var j = 0;j < selUser.length;j++){
+									        if(this.selList[i].id == selUser[j].id){ // 如果数据能保证id和name一直配对，则可以少一个比较条件
+									            flag = false;
+									            break;
+									        }
+									    }
+									    if(flag){
+									        selUser.push(this.selList[i]);
+									    }
+									}
+								}
+							}else{
+								selUser = this.selList;
+							}
+							console.log(selUser)
+							var elem = document.getElementById("userDialogList");
+						    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+						    {
+						        elem.removeChild(elem.firstChild);
+						    }
+							for(var n = 0;n < selUser.length;n++){
+								var name = selUser[n].full_name;
+								var items='<li>'
+	　　　　						items+='<span>'+name+'</span>'
+								items+='<div class="actions">'
+								items+='<a onclick="removeUsers(\''+selUser[n].id+'\')">'
+								items+='<span class="undis">'+selUser[n]+'</span>'
+								items+='<i class="icon icon-remove"></i>'
+								items+='</a>'
+								items+='</div>'
+								items+='</li>'
+								jQuery("#userDialogList").append(items);
+							}
+							jQuery(".userSelect").addClass("undis");
+						}
+					}
+				}
+			});
+		</script>
+	</div>
+	<div ng-if="roleSelectDialog" class="roleSelect">
+		<div id="roleDialog">
+			<el-dialog :title="lang.org" :show-close="isShowDialog" :visible.sync="dialogRole" width="850px" top="5vh" :modal="modal">
+				<div style="height: 450px;width: 100%;position: relative;">
+					<div class="content_bg" style="height: 62px;">
+					<div class="t_left ">
+							<el-select size="small" v-model="searchAppID" style="width: 200px;" @change="selectAppID()">
+								<el-option v-for="list in operateApp" :label="list.name" :value="list.id">
+								</el-option>
+							</el-select>
+						</div>
+						<div class="t_left mg_l15">
+							<el-input v-model="selOrgData.name" size="small" :placeholder="lang.selOrgMessage" @focus="selectOrg()"></el-input>
+						</div>
+						<div class="t_left mg_l15">
+							<el-input style="width: 200px;height: 32px;" :placeholder="lang.inputName" v-model.trim="searchName" size="small" @keyup.enter.native="searchRole" clearable></el-input>
+						</div>
+						<div class="t_right">
+							<el-button size="small" type="primary" icon="el-icon-search" @click="searchRole()"><span>搜索</span></el-button>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="content_bg mg_t14">
+						<el-table border stripe :data="roleListData" style="width: 100%;" height="290" highlight-current-row @selection-change="handleSelectionChange">
+							<el-table-column type="selection" width="50">
+							</el-table-column>
+							<el-table-column prop="name" :label="lang.name" show-overflow-tooltip></el-table-column>
+							<el-table-column prop="code" :label="lang.code" width="250" show-overflow-tooltip></el-table-column>
+							</el-table-column>
+						</el-table>
+						<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+							<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background :current-page="currentPage" :page-sizes="[10, 20, 30]" :page-size="10" layout="total, sizes, prev, pager, next, jumper" :total="total_count">
+							</el-pagination>
+						</div>
+					</div>
+				</div>
+				<span slot="footer" class="dialog-footer">
+				    <el-button @click="cancelRoleDialog()"><sapn v-text="lang.cancel"></sapn></el-button>
+				    <el-button type="primary" @click="confirmRoleDialog()"><sapn v-text="lang.confirm"></sapn></el-button>
+				  </span>
+			</el-dialog>
+			<!--选择组织弹框-->
+			<el-dialog :title="lang.org" width="300px" top="10vh" :visible.sync="selectOrgDialog" :close-on-click-modal="false">
+			<el-tree ref="orgTree" show-checkbox check-strictly :props="defaultProps" node-key="id" :default-expanded-keys="[0]" :load="loadNode" lazy accordion @check-change="handleNodeClick"></el-tree>			
+				<div slot="footer" class="dialog-footer">
+				<el-button @click="selectOrgDialog = false"><sapn v-text="lang.cancel"></sapn></el-button>
+				<el-button type="primary" @click="selectOrgConfirm()"><sapn v-text="lang.confirm"></sapn></el-button>					
+				</div>
+			</el-dialog>
+		</div>
+		<script type="application/javascript">
+			new Vue({
+				el: '#roleDialog',
+				data: function() {
+					return {
+						lang:{
+							org:"",
+							search:"",
+							inputName:"",
+							name:"",
+							confirm:"",
+							cancel:"",
+							selOrgMessage:"",
+							code:""
+						},
+						modal:false,
+						dialogRole: true,
+						isShowDialog:false,
+						roleListData:[],
+						currentPage: 1, //当前的请求页面。
+						total_count: 0,
+						pageSize: 10,
+						start: 0,
+						searchName: '',
+						selRoleList:[],
+						searchAppID: "", //下拉选中应用的值
+						operateApp: [], //可操作的APP
+						selOrgData: "", //条件筛选选择的组织
+						selectOrgDialog: false, //选择组织弹框
+						highlight: true, //树高亮显示选中
+						height: 0,
+						defaultProps: {
+							id: 'id',
+							label: 'name',
+							children: 'children',
+							isLeaf: 'is_leaf'
+						},
+						selOrgTreeNote: {}, //选择的组织树节点
+						i: 0, //单选菜单树定义i
+					}
+				},
+				created: function() {
+					this.langFn();
+					this.searchAppID=Common.getUserInfo().app_id;
+					this.getAppList();
+					this.getroleList(this.currentPage, this.pageSize);
+				},
+				methods: {
+					langFn:function(){
+						this.lang.org = USER_ROLE.org;
+						this.lang.search = USER_ROLE.search;
+						this.lang.inputName = USER_ROLE.inputName;
+						this.lang.name = USER_ROLE.name;
+						this.lang.confirm = USER_ROLE.confirm;
+						this.lang.cancel = USER_ROLE.cancel;
+						this.lang.selOrgMessage = USER_ROLE.selOrgMessage;
+						this.lang.code = USER_ROLE.code;
+					},
+					//表格单选
+					handleSelectionChange: function(val) {
+						this.selRoleList = val;
+					},
+					handleSizeChange: function(val) { //pageSize 改变时会触发
+						this.pageSize = val;
+						this.getroleList(this.currentPage, this.pageSize);
+					},
+					handleCurrentChange: function(val) { //currentPage 改变时会触发
+						this.currentPage = val;
+						this.getroleList(this.currentPage, this.pageSize);
+					},
+					//根据名称查询角色
+					searchRole: function() {
+						this.currentPage = 1;
+						this.getroleList(this.currentPage, this.pageSize);
+					},
+					/**
+					 * 获取角色列表
+					 * pageNum 页码
+					 * showNum 一页展示的个数
+					 */
+					getroleList: function(pageNum, showNum) {
+						this.roleListData = [];
+						var This = this;
+						var url = '/uap/role/list';
+						var data = {};
+						data.app_id =  this.searchAppID;
+						data.limit = showNum;
+						data.start = (pageNum - 1) * showNum;
+						if(this.searchName) {
+							data.name = this.searchName;
+						}
+						if(this.selOrgData != "") {
+							data.org_id = this.selOrgData.id;
+							url = "/uap/org/role/list";
+						}
+						HTTP.httpPost(this, url, data, function(res) {
+							var data = res.data;
+							This.total_count = res.total;
+							var rowObj = [];
+							for(var i = 0; i < data.length; i++) {
+								var rowObjitem = data[i];
+								rowObj.push(rowObjitem)
+							}
+							This.roleListData = rowObj;
+						});
+					},
+					cancelRoleDialog:function(){
+						jQuery(".roleSelect").addClass("undis");
+					},
+					confirmRoleDialog:function(){
+						//去除已经选择的
+						if(selGroups.length > 0){
+							if(this.selRoleList.length > 0){
+								var flag = true;
+								for(var i = 0;i < this.selRoleList.length;i++){
+								    flag = true;
+								    for(var j = 0;j < selGroups.length;j++){
+								        if(this.selRoleList[i].id == selGroups[j].id){ // 如果数据能保证id和name一直配对，则可以少一个比较条件
+								            flag = false;
+								            break;
+								        }
+								    }
+								    if(flag){
+								        selGroups.push(this.selRoleList[i]);
+								    }
+								}
+							}
+						}else{
+							selGroups = this.selRoleList;
+						}
+						
+						var elem = document.getElementById("groupList");
+					    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+					    {
+					        elem.removeChild(elem.firstChild);
+					    }
+						for(var n = 0;n < selGroups.length;n++){
+							var items='<li>'
+　　　　						items+='<span>'+selGroups[n].name+'</span>'
+							items+='<div class="actions">'
+							items+='<a onclick="removeGroups(\''+selGroups[n].id+'\')">'
+							items+='<i class="icon icon-remove"></i>'
+							items+='</a>'
+							items+='</div>'
+							items+='</li>'
+							jQuery("#groupList").append(items);
+						}
+						jQuery(".roleSelect").addClass("undis");
+					},
+					//根据应用查询角色
+					selectAppID: function() {
+						this.currentPage = 1;
+						this.getroleList(this.currentPage, this.pageSize);
+					},
+					/**
+					 * 获取应用表格数据
+					 */
+					getAppList: function() {
+						var httpUrl = "/uap/app/list";
+						this.appDataList = [];
+						var data = {};
+						data.start = 0;						
+						data.state = "1";						
+						var This = this;
+						HTTP.httpPost(this, httpUrl, data, function(res) {
+							This.operateApp = res.data;												
+						});
+					},
+					//选择组织弹框
+					selectOrg: function() {
+						this.selectOrgDialog = true;
+					},
+					//组织树懒加载方法
+					loadNode: function(node, resolve) {
+						if(node.level === 0) {
+							this.getOrgTree("", function(data) {
+								return resolve(data);
+							});
+						}
+						if(node.level > 0) {
+							this.getOrgTree(node.data.id, function(data) {
+								return resolve(data);
+							});
+						}
+					},
+					/**
+					 * 获取对应业务组织节点的子节点
+					 */
+					getOrgTree: function(parentId, success) {
+						var tree = [];
+						var This = this;
+						var data = {};
+						data.parent_id = parentId;
+						data.app_id = this.searchAppID;
+						var url = '/uap/org/sublist';
+						HTTP.httpPost(this, url, data, function(res) {
+							tree = res.data;
+							if(success) {
+								success(tree);
+							}
+						}, function(error) {});
+
+					},
+					//组织树节点点击事件
+					handleNodeClick: function(data, checked, node) { //树
+						this.i++;
+						if(this.i % 2 == 0) {
+							if(checked) {
+								this.$refs.orgTree.setCheckedNodes([]);
+								this.$refs.orgTree.setCheckedNodes([data]);
+								//交叉点击节点					
+							} else {
+								this.$refs.orgTree.setCheckedNodes([]);
+								//点击已经选中的节点，置空					
+							}
+						}
+						this.selOrgTreeNote = this.$refs.orgTree.getCheckedNodes();
+					},
+					//选择组织树提交事件
+					selectOrgConfirm: function() {
+						if(this.selOrgTreeNote.length == 0) {
+							this.selOrgData = "";
+						} else {
+							this.selOrgData = this.selOrgTreeNote[0];
+						}
+						this.selectOrgDialog = false;
+					}
+					
+				}
+			});
+		</script>
+	</div>
+</div>
+
+<script type="application/javascript">
+	function removeUserOne(){
+		var elem = document.getElementById("userOneList");
+	    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+	    {
+	        elem.removeChild(elem.firstChild);
+	    }
+		selUserOne = [];
+	}
+	
+	function removeUsers(userId){
+		var elem = document.getElementById("userDialogList");
+	    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+	    {
+	        elem.removeChild(elem.firstChild);
+	    }
+	    var users = [];
+		for(var n = 0;n < selUser.length;n++){
+			if(parseInt(selUser[n].id) != parseInt(userId)){
+				var name = selUser[n].full_name;
+				var items='<li>'
+	　　　　		items+='<span>'+name+'</span>'
+				items+='<div class="actions">'
+				items+='<a onclick="removeUsers(\''+selUser[n].id+'\')">'
+				items+='<span class="undis">'+selUser[n]+'</span>'
+				items+='<i class="icon icon-remove"></i>'
+				items+='</a>'
+				items+='</div>'
+				items+='</li>'
+				append(elem,items);
+				users.push(selUser[n]);
+			}
+		}
+		selUser = users;
+	}
+	
+	function removeGroups(roleId){
+		var elem = document.getElementById("groupList");
+	    while(elem.hasChildNodes()) //当elem下还存在子节点时 循环继续
+	    {
+	        elem.removeChild(elem.firstChild);
+	    }
+	    var groups = [];
+		for(var n = 0;n < selGroups.length;n++){
+			if(parseInt(selGroups[n].id) != parseInt(roleId)){
+				var items='<li>'
+　　　　			items+='<span>'+selGroups[n].name+'</span>'
+				items+='<div class="actions">'
+				items+='<a onclick="removeGroups(\''+selGroups[n].id+'\')">'
+				items+='<i class="icon icon-remove"></i>'
+				items+='</a>'
+				items+='</div>'
+				items+='</li>'
+				append(elem,items);
+				groups.push(selGroups[n]);
+			}
+		}
+		selGroups = groups;
+	}
+	
+	 function append(parent, text) {
+	    if (typeof text === 'string') {
+	      var temp = document.createElement('div');
+	      temp.innerHTML = text;
+	      // 防止元素太多 进行提速
+	      var frag = document.createDocumentFragment();
+	      while (temp.firstChild) {
+	        frag.appendChild(temp.firstChild);
+	      }
+	      parent.appendChild(frag);
+	    }
+	    else {
+	      parent.appendChild(text);
+	    }
+	  }
+
+</script>
+<style type="text/css">
+	.undis{
+		display: none;
+	}
+	.dis{
+		display: block;
+	}
+	.v-modal {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		opacity: .5;
+		background: #000;
+		z-index: 100 !important;
+	}
+	
+	.el-dialog__body {
+		padding: 20px 20px;
+		color: #606266;
+		line-height: 24px;
+		font-size: 14px;
+		background: #EEEEEE;
+	}
+</style>

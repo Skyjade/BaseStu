@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>My Task</title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="../../js/allSecond.js"></script>
+		<script type="text/javascript" src="../../js/libs/moment.min.js" ></script>
+		<style type="text/css">
+			iframe {
+			    border-width: 0px;
+			    border-style: none;
+			    border-color: transparent;
+			    border-image: none;
+			}
+			.searchBox .date .el-input__icon {
+			    height: 100%;
+			    width: 25px;
+			    text-align: center;
+			    -webkit-transition: all .3s;
+			    transition: all .3s;
+			    line-height: 32px;
+			}
+			.searchBox .date .el-input__inner {
+			    -webkit-appearance: none;
+			    background-color: rgb(255, 255, 255);
+			    background-image: none;
+			    box-sizing: border-box;
+			    color: rgb(96, 98, 102);
+			    display: inline-block;
+			    font-size: inherit;
+			    height: 32px;
+			    line-height: 32px;
+			    width: 100%;
+			    border-radius: 4px;
+			    border-width: 1px;
+			    border-style: solid;
+			    border-color: rgb(220, 223, 230);
+			    border-image: initial;
+			    outline: 0px;
+			    padding: 0px 15px 0 30px;
+			    transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+			}
+		</style>
+	</head>
+	<body>
+		<div id="myTask">
+			<div class="content_bg searchBox" style="padding-top: 5px;">
+				<div>
+					<div class="t_left mg_t10">
+						<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="homePage.processNum"></span></div>
+						<div class="t_left mg_l15">
+							<el-input size="small" v-model.trim="search.processInstanceId" style="width: 180px;height: 32px;"></el-input>
+						</div>
+						<div class="clear"></div>
+					</div>
+					
+					<div class="t_left mg_t10">
+						<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="homePage.processName"></div>
+						<div class="t_left mg_l15">
+							<el-input size="small" v-model.trim="search.processDefinitionName" style="width: 180px;height: 32px;"></el-input>
+						</div>
+						<div class="clear"></div>
+					</div>
+				
+					<div class="t_left mg_t10">
+						<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="homePage.workItemName"></div>
+						<div class="t_left mg_l15">
+							<el-input size="small" v-model.trim="search.workName" style="width: 180px;height: 32px;"></el-input>
+						</div>
+						<div class="clear"></div>
+					</div>
+					
+					<div class="t_left mg_t10" style="width: 100%;">
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="homePage.linkStartTime"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker
+							      v-model="search.linkStartupTime"
+							      type="datetime"
+							      :placeholder="$.t('common.chooseDate')"
+							      style="width: 180px;height: 32px;">
+							    </el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="t_left">
+							<div class="t_left" style="line-height: 32px;width: 150px;text-align: right;"><span data-i18n="common.to"></span></div>
+							<div class="t_left mg_l15 date">
+								<el-date-picker
+							      v-model="search.linkEndupTime"
+							      type="datetime"
+							      :placeholder="$.t('common.chooseDate')"
+							      style="width: 180px;height: 32px;">
+							    </el-date-picker>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="t_right">
+							<el-button class="t_right" size="small" type="primary" icon="el-icon-search" @click="searchBtn()"><span data-i18n="common.search"></span></el-button>
+							<div class="clear"></div>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="content_bg mg_t15" style="padding:10px 15px;">
+				<div class="tableTitle">
+					<div class="t_right">
+						<el-button :disabled="functionBtn" round size="small" icon="el-icon-document" @click="viewFlowChart()"><span data-i18n="homePage.viewProcessChart"></span></el-button>
+						<el-button :disabled="functionBtn" round size="small" icon="el-icon-edit" @click="claim()"><span data-i18n="homePage.signIn"></span></el-button>
+						<el-button :disabled="functionBtn" round size="small" icon="el-icon-delete" @click="claimCancel()"><span data-i18n="homePage.cancelSign"></span></el-button>
+						<el-button :disabled="functionBtn" round size="small" icon="el-icon-edit"  @click="entrust()"><span data-i18n="homePage.commission"></span></el-button>
+						<el-button :disabled="functionBtn" round size="small" icon="el-icon-check" @click = "openDetail()"><span data-i18n="homePage.handle"></span></el-button>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<el-table border stripe :data="taskList" highlight-current-row @selection-change="handleSelectionChange">
+					<el-table-column type="selection" width="50">
+					</el-table-column>
+					<el-table-column v-for = "list in table_head" :prop="list.uap_page_field.field" :label="list.uap_page_config_detail.display_name" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<!--<el-table-column prop="process_instance_id" :label="$.t('homePage.processNum')" width="135" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="business_name" :label="$.t('homePage.workMatters')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="task_state" :label="$.t('common.status')" width="100" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="process_definition_name" :label="$.t('homePage.processName')" width="130" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="name" :label="$.t('homePage.workItemName')" width="150" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="id" :label="$.t('homePage.WorkItemIden')" width="185" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="start_time" :formatter="dateFormat" :label="$.t('homePage.linkStartTime')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="create_time" :formatter="dateFormat" :label="$.t('homePage.processStartTime')" width="180" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="claim_time" :formatter="dateFormat"  :label="$.t('homePage.signingTime')" width="180" show-overflow-tooltip>
+					</el-table-column>-->
+				</el-table>
+				<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+					<el-pagination 
+						@size-change="handleSizeChange" 
+						@current-change="handleCurrentChange" 
+						background 
+						:current-page="currentPage" 
+						:page-sizes="[10, 20, 30]" 
+						:page-size="10" layout="total, sizes, prev, pager, next, jumper" 
+						:total="total_count">
+					</el-pagination>
+				</div>
+			</div>
+			
+			<el-dialog :title="$.t('common.user')" :visible.sync="userDialog" width="300px">
+				<div style="width:250px;">
+					<el-table border stripe :data="userList" height="300" highlight-current-row @selection-change="userSelectionChange">
+						<el-table-column type="selection" width="55">
+						</el-table-column>
+						<el-table-column prop="name" :label="$.t('common.name')" width="180" show-overflow-tooltip>
+						</el-table-column>
+					</el-table>
+				</div>
+				<span slot="footer" class="dialog-footer">
+					<el-button :disabled = "entrustBtn" type="primary" @click="entrustConfirm()" data-i18n="common.confirm"></el-button>
+                    <el-button @click="userDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+			
+			<!--查看流程图-->
+			<el-dialog :title="$.t('homePage.flowChart')" :visible.sync="flowChartDialog" fullscreen="true">
+				<div style="width:100%;height: 365px;">
+					<iframe width="100%" height="100%" v-bind:src="flowChartSrc"></iframe>
+				</div>
+				<span slot="footer" class="dialog-footer">                   
+                     <el-button @click="flowChartDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+		<script type="text/javascript" src="../../js/homePage/myTask.js" ></script>
+	</body>
+</html>

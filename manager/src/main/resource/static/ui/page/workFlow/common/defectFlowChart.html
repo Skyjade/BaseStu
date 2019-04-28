@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title></title>
+		<script type="text/javascript" src="raphael.js"></script>
+		<script type="text/javascript" src="Polyline.js"></script>
+		<script type="text/javascript" src="bpmn-draw.js"></script>
+		<script type="text/javascript" src="bpmn-icons.js"></script>
+		<script type="text/javascript" src="../libs/jquery.min.js"></script>
+		<script type="text/javascript" src="../libs/common.js"></script>
+	</head>
+	<body>
+		<div id="defectFlowChart">
+		</div>
+	</body>
+	<script>
+		var allData = window.parent.window.setData();
+		var selectedElement = undefined;
+		var NORMAL_STROKE = 1;
+		var SEQUENCEFLOW_STROKE = 1.5;
+		var ASSOCIATION_STROKE = 2;
+		var TASK_STROKE = 1;
+		var TASK_HIGHLIGHT_STROKE = 2;
+		var CALL_ACTIVITY_STROKE = 2;
+		var ENDEVENT_STROKE = 3;
+
+		var COMPLETED_COLOR = "#2632aa";
+		var TEXT_COLOR = "#373e48";
+		var CURRENT_COLOR = "#ff0000";
+		var HOVER_COLOR = "#666666";
+		var ACTIVITY_STROKE_COLOR = "#bbbbbb";
+		var ACTIVITY_FILL_COLOR = "#f9f9f9";
+		var MAIN_STROKE_COLOR = "#585858";
+
+		var TEXT_PADDING = 3;
+		var ARROW_WIDTH = 4;
+		var MARKER_WIDTH = 12;
+
+		var TASK_FONT = {
+			font: "11px Arial",
+			opacity: 1,
+			fill: Raphael.rgb(0, 0, 0)
+		};
+
+		// icons
+		var ICON_SIZE = 16;
+		var ICON_PADDING = 4;
+		var paper;
+		var viewBox;
+		var viewBoxWidth;
+		var viewBoxHeight;
+
+		var canvasWidth;
+		var canvasHeight;
+		var INITIAL_CANVAS_WIDTH;
+		var INITIAL_CANVAS_HEIGHT;
+		var modelDiv = document.getElementById('defectFlowChart');
+		var elementsAdded = new Array();
+		var elementsRemoved = new Array();
+		var customActivityColors;
+		var customActivityBackgroundOpacity;
+		
+		var data = {}
+		var httpUrl = Common.getUserInfo().uap_bpm_url+"/uap-bpm/app/model/processInstance/"+allData.process_instance_id;
+    	$.ajax({
+			url: httpUrl,
+			type: 'GET',
+			headers: {
+		        Authorization: 'Bearer ' + Common.getToken()
+		    },
+			dataType: 'json',
+			contentType: 'application/json; charset=utf-8',
+			timeout: 60000,
+			success: function(res) {
+				data = res.data;
+				INITIAL_CANVAS_WIDTH = data.diagramWidth + 30;
+				INITIAL_CANVAS_HEIGHT = data.diagramHeight + 50;
+				canvasWidth = INITIAL_CANVAS_WIDTH;
+				canvasHeight = INITIAL_CANVAS_HEIGHT;
+				viewBoxWidth = INITIAL_CANVAS_WIDTH;
+				viewBoxHeight = INITIAL_CANVAS_HEIGHT;
+		
+				paper = Raphael(modelDiv, canvasWidth, canvasHeight);
+				paper.setViewBox(0, 0, viewBoxWidth, viewBoxHeight, false);
+				paper.renderfix();
+		
+				if(data.pools) {
+					for(var i = 0; i < data.pools.length; i++) {
+						var pool = data.pools[i];
+						_drawPool(pool);
+					}
+				}
+				var modelElements = data.elements;
+				for(var i = 0; i < modelElements.length; i++) {
+					var element = modelElements[i];
+					//            try {
+					var drawFunction = eval("_draw" + element.type);
+					drawFunction(element);
+					//            } catch(err) {console.log(err);}
+				}
+		
+				if(data.flows) {
+					for(var i = 0; i < data.flows.length; i++) {
+						var flow = data.flows[i];
+						if(flow.type === 'sequenceFlow') {
+							_drawFlow(flow);
+						} else if(flow.type === 'association') {
+							_drawAssociation(flow);
+						}
+					}
+				}
+			},
+			error: function(error) {
+			}
+		});
+		
+		
+
+		function _addHoverLogic(element, type, defaultColor) {
+			var strokeColor = _bpmnGetColor(element, defaultColor);
+			var topBodyRect = null;
+			if(type === "rect") {
+				topBodyRect = paper.rect(element.x, element.y, element.width, element.height);
+			} else if(type === "circle") {
+				var x = element.x + (element.width / 2);
+				var y = element.y + (element.height / 2);
+				topBodyRect = paper.circle(x, y, 15);
+			} else if(type === "rhombus") {
+				topBodyRect = paper.path("M" + element.x + " " + (element.y + (element.height / 2)) +
+					"L" + (element.x + (element.width / 2)) + " " + (element.y + element.height) +
+					"L" + (element.x + element.width) + " " + (element.y + (element.height / 2)) +
+					"L" + (element.x + (element.width / 2)) + " " + element.y + "z"
+				);
+			}
+
+			var opacity = 0;
+			var fillColor = "#ffffff";
+			if(jQuery.inArray(element.id, elementsAdded) >= 0) {
+				opacity = 0.2;
+				fillColor = "green";
+			}
+
+			if(jQuery.inArray(element.id, elementsRemoved) >= 0) {
+				opacity = 0.2;
+				fillColor = "red";
+			}
+
+			topBodyRect.attr({
+				"opacity": opacity,
+				"stroke": "none",
+				"fill": fillColor
+			});
+			_showTip(jQuery(topBodyRect.node), element);
+
+			topBodyRect.mouseover(function() {
+				paper.getById(element.id).attr({
+					"stroke": HOVER_COLOR
+				});
+			});
+
+			topBodyRect.mouseout(function() {
+				paper.getById(element.id).attr({
+					"stroke": _bpmnGetColor(element, defaultColor)
+				});
+			});
+		}
+
+		function _showTip(htmlNode, element) {}
+	</script>
+
+</html>

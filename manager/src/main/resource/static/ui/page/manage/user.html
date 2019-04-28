@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="../../js/allSecond.js"></script>
+		<style>
+			.input-with-select .el-input-group__prepend {
+				background-color: #fff;
+			}
+			
+			.leftBox {
+				position: absolute;
+				left: 0;
+				width: 260px;
+				top: 0px;
+				bottom: 0;
+			}
+			
+			.rightBox {
+				position: absolute;
+				left: 275px;
+				right: 0;
+			}
+			
+			.el-tree-node__content {
+				display: -webkit-box;
+				display: -ms-flexbox;
+				display: flex;
+				-webkit-box-align: center;
+				-ms-flex-align: center;
+				align-items: center;
+				height: 36px;
+				cursor: pointer;
+			}
+			
+			.el-tree-node__label {
+				font-size: 14px;
+				color: #666666;
+			}
+			
+			.avatar-uploader .el-upload {
+				border: 1px dashed #d9d9d9;
+				border-radius: 6px;
+				cursor: pointer;
+				position: relative;
+				overflow: hidden;
+			}
+			
+			.avatar-uploader .el-upload:hover {
+				border-color: #409EFF;
+			}
+			
+			.avatar-uploader-icon {
+				font-size: 28px;
+				color: #8c939d;
+				width: 100px;
+				height: 100px;
+				line-height: 100px;
+				text-align: center;
+			}
+			
+			.avatar {
+				width: 100px;
+				height: 100px;
+				display: block;
+			}
+		</style>
+	</head>
+
+	<body class="gray-bg">
+		<div id="userManage" style="position: relative; width: 100%; height: 100%;">
+			<div class="leftBox content_bg tree" style="overflow-y: auto;">
+				<div class="mg_b10 mg_t10">
+					<el-select size="mini" v-model="searchAppID" style="width: 200px;margin-right: 10px;" @change="selectAppID()">
+						<el-option v-for="list in operateApp" :label="list.name" :value="list.id">
+						</el-option>
+					</el-select>
+					<i class="fa fa-trash-o t_right el-icon-refresh clearTree" @click="clearTree()"></i>
+				</div>
+				<el-tree ref="baseOrgTree" accordion node-key="id" :load="loadLeftTreeNode" :default-expanded-keys="[0]" :highlight-current="highlight" lazy :props="defaultProps" @node-expand="nodeExpand" @node-click="handleLeftTreeNodeClick"></el-tree>
+			</div>
+
+			<div class="rightBox">
+				<div>
+					<div class="content_bg" style="height: 62px;">
+						<div class="t_left">
+							<el-select size="small" v-model="stateValue" slot="prepend" data-i18n="[placeholder]common.select" @change="selectState()" style="width:150px;height: 32px;">
+								<el-option v-for="list in allState" :label="list.text" :value="list.code"></el-option>
+							</el-select>
+						</div>
+						<div class="t_left mg_l10">
+							<el-input v-model.trim="searchInput" size="small" style="width:300px;height: 32px;" clearable data-i18n="[placeholder]common.inputName" @keyup.enter.native="searchUser()"></el-input>
+						</div>
+						<div class="t_right">
+							<el-button size="small" type="primary" icon="el-icon-search" @click="searchUser()"><span data-i18n="common.search"></span></el-button>
+						</div>
+						<div class="clear"></div>
+					</div>
+					<div class="content_bg mg_t14">
+						<div class="tableTitle">
+							<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+								<span data-i18n="common.UserTitle"></span>
+							</div>
+							<div class="t_right">
+								<el-button round size="small" icon="el-icon-document" @click="openAddUserDialog()" :disabled="addDisabled"><span data-i18n="common.add"></span></el-button>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<el-table ref="userListTable" stripe border :data="userListData" tooltip-effect="dark" style="width: 100%;">
+							<el-table-column prop="no" min-width="120" :label="$.t('user.no')" show-overflow-tooltip>
+							</el-table-column>
+							<el-table-column prop="name" min-width="120" :label="$.t('common.name')" show-overflow-tooltip>
+							</el-table-column>
+							<el-table-column prop="phone" width="160" :label="$.t('user.phone')" show-overflow-tooltip>
+							</el-table-column>
+							<el-table-column prop="email" width="180" :label="$.t('user.email')" show-overflow-tooltip>
+							</el-table-column>
+							<el-table-column width="150" :label="$.t('common.status')">
+								<template slot-scope="scope">
+									<!--<el-switch v-model="scope.row.stateNo" :disabled="scope.row.isDisuse" @change="stateChange(scope.row)">
+									</el-switch>-->
+									<el-select size="small" v-model="scope.row.state" slot="prepend" data-i18n="[placeholder]common.select" @change="stateChange(scope.row)" style="width:130px;height: 32px;">
+										<el-option v-for="list in tableState" :disabled="list.disabled" :label="list.text" :value="list.code"></el-option>
+									</el-select>
+								</template>
+							</el-table-column>
+							<el-table-column :label="$.t('common.operate')" min-width="150">
+								<template slot-scope="scope">
+									<el-tooltip class="item" effect="dark" :content="$.t('common.edit')" placement="top">
+										<el-button size="mini" icon="el-icon-edit" :disabled="editDisabled" @click="openEditUserDialog(scope.$index, scope.row)" circle></el-button>
+									</el-tooltip>
+									<el-tooltip class="item" effect="dark" :content="$.t('user.roleChoose')" placement="top">
+										<el-button size="mini" icon="el-icon-setting" :disabled="roleChooseDisabled" @click="openRoleDialog(scope.$index, scope.row)" circle></el-button>
+									</el-tooltip>
+									<el-tooltip class="item" effect="dark" :content="$.t('user.resetPWD')" placement="top">
+										<el-button size="mini" icon="el-icon-goods" @click="openResetDialog(scope.row)" circle></el-button>
+									</el-tooltip>
+								</template>
+							</el-table-column>
+						</el-table>
+						<div class="block mg_t20" style="background: white;width:100%;height:40px;">
+							<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-size="pageSize" :page-sizes="[10, 20, 30]" layout="total,sizes, prev, pager, next,jumper" :total="total" background>
+							</el-pagination>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--新增用户弹框-->
+			<el-dialog :title="$.t('common.add')" :visible.sync="addUserDialog" width="800px" :close-on-click-modal="false">
+				<el-form :model="addUserData" :inline="true" size="small" :rules="rules" ref="addUserForm" class="demo-ruleForm" label-width="110px">
+					<div style="float:right;width:110px;height:110px;margin-top:40px">
+						<el-upload class="avatar-uploader" :action="imgAction" :show-file-list="false" :on-success="handleAvatarSuccess" :headers="myHeaders">
+							<img v-if="imageUrl" :src="imageUrl" class="avatar">
+							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+						</el-upload>
+					</div>
+					<el-form-item :label="$.t('user.no')" prop="no">
+						<el-input v-model.trim="addUserData.no" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.name')" prop="name">
+						<el-input v-model.trim="addUserData.name" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('org.orgTab')" prop="base_org_name" >
+						<el-input v-model="addUserData.base_org_name" style="width: 200px;" disabled></el-input>
+					</el-form-item>
+                    <el-form-item :label="$.t('user.password')" prop="pass_word">
+						<el-input type="password" v-model="addUserData.pass_word" style="width: 200px;" clearable @clear="isshow=false" @input="pwStrength(addUserData.pass_word)"></el-input>
+						<table width="200" border="1" bordercolor="#cccccc" height="23" v-show="isshow">
+							<tr bgcolor="#eeeeee">
+								<td width="80" id="strength_L"></td>
+								<td width="80" id="strength_M"></td>
+								<td width="80" id="strength_H"></td>
+							</tr>
+						</table>
+					</el-form-item>               
+					<el-form-item :label="$.t('user.phone')" prop="phone">
+						<el-input v-model="addUserData.phone" style="width: 200px;"></el-input>
+					</el-form-item>	
+					<el-form-item :label="$.t('user.passwordConfirm')" prop="confirm_password">
+						<el-input type="password" v-model="addUserData.confirm_password" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.email')" prop="email">
+						<el-input v-model="addUserData.email" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.bindIP')">
+						<el-input v-model="addUserData.bindIP" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.effective_data')">
+						<el-date-picker v-model="addUserData.effective_data" value-format="timestamp" type="daterange" :range-separator="$.t('common.to')" :default-time="['00:00:00', '23:59:59']" :start-placeholder="$.t('common.startTime')" :end-placeholder="$.t('common.endTime')" :picker-options="pickerOptionsDateLimit"  style="width: 635px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item :label="$.t('user.effective_time')">
+						<el-time-select :placeholder="$.t('common.startTime')" v-model="addUserData.login_time_start" :picker-options="{
+						      start: '08:00',
+						      step: '00:30',
+						      end: '20:00'
+						    }" style="width: 316px;">
+						</el-time-select>
+						<el-time-select :placeholder="$.t('common.endTime')" v-model="addUserData.login_time_end" :picker-options="{
+						      start: '08:00',
+						      step: '00:30',
+						      end: '20:00',
+						      minTime: addUserData.login_time_start
+						    }" style="width: 316px;">
+						</el-time-select>
+					</el-form-item>
+			</el-form>
+				<span slot="footer" class="dialog-footer">             
+                <el-button type="primary" @click="addUserConfirm()" data-i18n="common.confirm"></el-button>
+                <el-button @click="addUserDialog = false" data-i18n="common.cancel"></el-button>
+               </span>
+		</el-dialog>
+			<!--编辑用户弹框-->
+			<el-dialog :title="$.t('common.edit')" :visible.sync="editUserDialog" width="800px" :close-on-click-modal="false">
+				<el-form :model="editUserData" :inline="true" size="small" :rules="rules" label-width="110px" ref="editUserForm" class="demo-ruleForm">
+					<div style="float:right;width:110px;height:110px;margin-top:24px">
+						<el-upload class="avatar-uploader" :action="imgAction" :show-file-list="false" :on-success="handleAvatarSuccess" :headers="myHeaders">
+							<img v-if="imageUrl" :src="imageUrl" class="avatar">
+							<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+						</el-upload>
+					</div>
+					<el-form-item :label="$.t('user.no')" prop="no">
+						<el-input v-model.trim="editUserData.no" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('common.name')" prop="name">
+						<el-input v-model.trim="editUserData.name" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('org.orgTab')" prop="base_org_name">
+						<el-input v-model="editUserData.base_org_name" style="width: 200px;" disabled></el-input>
+					</el-form-item>					
+					<el-form-item :label="$.t('user.email')" prop="email">
+						<el-input v-model="editUserData.email" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.phone')" prop="phone">
+						<el-input v-model="editUserData.phone" style="width: 200px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.bindIP')">
+						<el-input v-model="editUserData.bind_ip" style="width: 200px;" clearable></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('user.effective_data')">
+						<el-date-picker v-model="effectiveData" type="daterange" value-format="timestamp" :range-separator="$.t('common.to')" :default-time="['00:00:00', '23:59:59']" :start-placeholder="$.t('common.startTime')" :picker-options="pickerOptionsDateLimit" :end-placeholder="$.t('common.endTime')" style="width: 635px;">
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item :label="$.t('user.effective_time')">
+						<el-time-select :placeholder="$.t('common.startTime')" v-model="editUserData.login_time_start" :picker-options="{
+						      start: '08:00',
+						      step: '00:30',
+						      end: '20:00'
+						    }" style="width: 316px;">
+						</el-time-select>
+						<el-time-select :placeholder="$.t('common.endTime')" v-model="editUserData.login_time_end" :picker-options="{
+						      start: '08:00',
+						      step: '00:30',
+						      end: '20:00',
+						      minTime: editUserData.login_time_start
+						    }" style="width: 316px;">
+						</el-time-select>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+                     <el-button type="primary" @click="editUserClick()" data-i18n="common.confirm"></el-button>
+                     <el-button @click="editUserDialog = false" data-i18n="common.cancel"></el-button>
+                </span>
+			</el-dialog>
+
+			<!--密码重置新密码-->
+			<el-dialog :title="$.t('user.resetPWD')" :visible.sync="resetPWDDialog" width="350px" :close-on-click-modal="false">
+				<el-form label-position="left" :inline="true" size="small" class="demo-ruleForm">
+					<el-form-item :label="$.t('user.newPassword')" prop="no" label-width="120px">
+						<span v-text="randomPWD"></span>
+					</el-form-item>
+					<el-form-item :label="$.t('user.notifyUser')" prop="no" label-width="300px">
+					</el-form-item>
+				</el-form>
+
+				<div slot="footer" class="dialog-footer">
+					<el-button type="primary" @click="resetPWDDialog = false" data-i18n="common.confirm"></el-button>
+				</div>
+			</el-dialog>
+
+		</div>
+
+		<script type="text/javascript" src="../../js/libs/md5.js"></script>
+		<script src="../../js/manage/user.js"></script>
+	</body>
+
+</html>

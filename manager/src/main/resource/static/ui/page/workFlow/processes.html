@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Processes</title>
+		<link href="css/all.css" rel="stylesheet">
+		<script src="libs/all.js"></script>
+		<style type="text/css">
+			.el-button.is-circle {
+				border-radius: 50%;
+				padding: 6px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="processes" style="width: 100%;height: 100%;">
+			<div class="content_bg" style="height: 60px;">
+				<div class="t_left" style="line-height: 32px;" data-i18n="common.name"></div>
+				<div class="t_left mg_l15">
+					<el-input v-model="processesName" size="small" style="width: 300px;height: 32px;"></el-input>
+				</div>
+				<div class="t_right">
+					<el-button size="small" type="primary" icon="el-icon-search" @click="searchBtn()"><span data-i18n="common.search"></span></el-button>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="content_bg mg_t15" style="padding:10px 15px;border-radius: 5px 5px 0 0;">
+				<div style="height: 55px;">
+					<div class="font16 f_color1 t_left" style="height: 30px;line-height: 30px;">
+						<span data-i18n="workFlow.processes"></span>
+					</div>
+					<div class="t_right">
+						<el-button round size="small" icon="el-icon-plus" @click="createBtn()"><span data-i18n="workFlow.createProcess"></span></el-button>
+					</div>
+					<div class="clear"></div>
+				</div>
+				<el-table border stripe :data="processesList" highlight-current-row @row-click="openDetail">
+					<el-table-column prop="name" :label="$.t('workFlow.name')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="createdBy" :label="$.t('workFlow.createdBy')" width="120" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="lastUpdated" :formatter="dateFormat" :label="$.t('workFlow.lastUpdateTime')" width="250" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="version" width="80" :label="$.t('workFlow.version')" show-overflow-tooltip>
+					</el-table-column>
+					<el-table-column prop="description" :label="$.t('workFlow.description')" show-overflow-tooltip>
+					</el-table-column>
+				</el-table>
+			</div>
+			<!--<div class="block" style="background: white;width:100%;height:40px;padding-left: 15px;">
+				<el-pagination 
+					@size-change="handleSizeChange" 
+					@current-change="handleCurrentChange" 
+					background 
+					:current-page="currentPage" 
+					:page-sizes="[10, 20, 30]" 
+					:page-size="10" layout="total, sizes, prev, pager, next, jumper" 
+					:total="total_count">
+				</el-pagination>
+			</div>-->
+
+			<el-dialog :title="$.t('workFlow.createProcess')" :visible.sync="createProcessDialog" width="370px" :close-on-click-modal="false">
+				<el-form :model="model" :rules="rules" label-width="80px" label-position="left">
+					<el-form-item :label="$.t('workFlow.name')" prop="modelName">
+						<el-input v-model="model.modelName" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('workFlow.key')" prop="modelKey">
+						<el-input v-model="model.modelKey" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+					<el-form-item :label="$.t('workFlow.description')">
+						<el-input v-model="model.description" size="small" style="width: 250px;"></el-input>
+					</el-form-item>
+				</el-form>
+				<span slot="footer" class="dialog-footer">                   
+					<el-button @click="createProcessDialog = false" data-i18n="common.cancel"></el-button>
+                    <el-button type="primary" @click = "createModel()" data-i18n="common.confirm"></el-button>
+                </span>
+			</el-dialog>
+		</div>
+		<script type="text/javascript" src="js/processes.js"></script>
+	</body>
+
+</html>

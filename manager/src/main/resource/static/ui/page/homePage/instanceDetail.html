@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Definition Detail</title>
+		<link href="../../css/all.css" rel="stylesheet">
+		<script src="../../js/allSecond.js"></script>
+		<style type="text/css">
+			.el-form-item {
+			    margin-bottom: 0px;
+			}
+			.el-form-item__label {
+			    text-align: right;
+			    float: left;
+			    font-size: 14px;
+			    color: #4C4C4C;
+			    line-height: 40px;
+			    padding: 0 12px 0 0;
+			    -webkit-box-sizing: border-box;
+			    box-sizing: border-box;
+			    font-weight: bold;
+			}
+			iframe {
+			    border-width: 0px;
+			    border-style: none;
+			    border-color: transparent;
+			    border-image: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="instanceDetail" style="width: 100%; height: 100%;">
+			<div class="content_bg">
+				<div v-show="isComplete" class="t_left">
+					<el-button round size="small" icon="el-icon-delete" @click="terminiteInstances()"><span data-i18n="instance.terminiteProcessInstance"></span></el-button>
+				</div>
+				<div v-show="!isComplete" class="t_left mg_l15">
+					<el-button round size="small" icon="el-icon-delete" @click="deleteInstances()"><span data-i18n="instance.deleteProcessInstance"></span></el-button>
+				</div>
+				<div class="t_right">
+					<a href="myInstances.html">
+					    <el-button size="small" type="primary" icon="el-icon-back"><span data-i18n="common.return"></span></el-button>
+					</a>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="content_bg mg_t14">
+				<div style="padding: 10px 0px;border-bottom: 1px solid #EEEEEE;">
+					<h3 style="line-height: 32px;" v-text = "title"></h3>
+				</div>
+				<div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.id"></div>
+						<div class="rightText" v-text="instance.id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.key"></div>
+						<div class="rightText" v-text="instance.business_key"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.name"></div>
+						<div class="rightText" v-text="instance.name"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.description"></div>
+						<div class="rightText" v-text="instance.description"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.status"></div>
+						<div class="rightText" v-text="instance.status"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.processDefinition"></div>
+						<div class="rightText" v-text="instance.process_definition_id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.activityIDStarted"></div>
+						<div class="rightText" v-text="instance.start_activity_id"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.startedBy"></div>
+						<div class="rightText" v-text="instance.start_user_id"></div>
+					</div>
+					<!--<div class="detailBox">
+						<div class="leftText">Tenant:</div>
+						<div class="rightText" v-text="instance.tenantId"></div>
+					</div>-->
+					<div class="detailBox">
+						<div class="leftText"  data-i18n="instance.superInstanceID"></div>
+						<div class="rightText" v-text="instance.super_process_instance_id"></div>
+					</div>
+					
+					<div class="detailBox">
+						<div class="leftText" data-i18n="common.endTime"></div>
+						<div class="rightText" v-text="instance.end_time"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.duration"></div>
+						<div class="rightText" v-text="instance.duration_in_millis"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.deleteReason"></div>
+						<div class="rightText" v-text="instance.delete_reason"></div>
+					</div>
+					<div class="detailBox">
+						<div class="leftText" data-i18n="instance.endedActivity"></div>
+						<div class="rightText" v-text="instance.end_activity_id"></div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="content_bg mg_t14" style="height: 400px;">
+				<iframe width="100%" height="100%" src="common/instancesModel.html"></iframe>
+			</div>
+		</div>
+		<script type="text/javascript" src="../../js/homePage/instanceDetail.js" ></script>
+		<script type="application/javascript">
+			function setId(){
+				var url = decodeURI(location.search); //获取url中"?"符后的字串 ('?modFlag=business&role=1')  
+				var theRequest = new Object();
+				if(url.indexOf("?") != -1) {
+					var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；  
+					var strs = str.split("&");
+					for(var i = 0; i < strs.length; i++) {
+						theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+					}
+				}
+				return theRequest.instanceId;
+			}
+		</script>
+	</body>
+</html>
