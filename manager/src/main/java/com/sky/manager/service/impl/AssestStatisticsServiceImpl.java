@@ -1,11 +1,15 @@
 package com.sky.manager.service.impl;
 
+import com.sky.common.entity.ListDataResp;
+import com.sky.common.entity.PageQuery;
 import com.sky.manager.bean.AssestStatistics;
 import com.sky.manager.dao.AssestStatisticsDao;
 import com.sky.manager.dao.MyBatisBaseDao;
 import com.sky.manager.service.AssestStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author wangtq
@@ -21,5 +25,12 @@ public class AssestStatisticsServiceImpl  extends BaseServiceImpl<AssestStatisti
     @Override
     protected MyBatisBaseDao <AssestStatistics,String> getDao() {
         return assestStatisticsDao;
+    }
+
+    @Override
+    public ListDataResp<AssestStatistics> getStatisticsList(PageQuery<AssestStatistics> query) {
+        List<AssestStatistics> statisticsList = assestStatisticsDao.getStatisticsList(query);
+        long count = assestStatisticsDao.getCountByCondition(query);
+        return  new ListDataResp<>(statisticsList,count);
     }
 }

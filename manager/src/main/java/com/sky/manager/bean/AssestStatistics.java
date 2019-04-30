@@ -1,5 +1,7 @@
 package com.sky.manager.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -16,6 +18,7 @@ public class AssestStatistics implements Serializable {
     /**
      * 创建时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date createTime;
 
     /**
@@ -41,6 +44,7 @@ public class AssestStatistics implements Serializable {
     /**
      * 修改时间
      */
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date updateTime;
 
     private static final long serialVersionUID = 1L;
@@ -99,41 +103,6 @@ public class AssestStatistics implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass() != that.getClass()) {
-            return false;
-        }
-        AssestStatistics other = (AssestStatistics) that;
-        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
-            && (this.getZfb() == null ? other.getZfb() == null : this.getZfb().equals(other.getZfb()))
-            && (this.getWx() == null ? other.getWx() == null : this.getWx().equals(other.getWx()))
-            && (this.getYhk() == null ? other.getYhk() == null : this.getYhk().equals(other.getYhk()))
-            && (this.getTotal() == null ? other.getTotal() == null : this.getTotal().equals(other.getTotal()))
-            && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()));
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
-        result = prime * result + ((getZfb() == null) ? 0 : getZfb().hashCode());
-        result = prime * result + ((getWx() == null) ? 0 : getWx().hashCode());
-        result = prime * result + ((getYhk() == null) ? 0 : getYhk().hashCode());
-        result = prime * result + ((getTotal() == null) ? 0 : getTotal().hashCode());
-        result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
-        return result;
     }
 
     @Override

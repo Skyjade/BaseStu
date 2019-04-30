@@ -19,6 +19,44 @@
     from assest_statistics
     where ID = #{id,jdbcType=VARCHAR}
   </select>
+
+  <!--组合查询-->
+  <select id="getStatisticsList" resultMap="BaseResultMap" parameterType="com.sky.common.entity.PageQuery">
+    select
+    <include refid="Base_Column_List" />
+    from assest_statistics
+    <where>
+      <if test="t !=null and t.total!=''">
+        and total &gt;= #{t.total}
+      </if>
+      <if test="startDate!=null">
+        and create_time &gt;= #{startDate}
+      </if>
+      <if test="endDate!=null">
+        and create_time &lt;= #{endDate}
+      </if>
+    </where>
+    limit #{start},#{limit}
+  </select>
+
+  <!--根据条件查询总数-->
+  <select id="getCountByCondition" resultType="java.lang.Long">
+    select
+    count(1)
+    from assest_statistics
+    <where>
+      <if test="t !=null and t.total!=''">
+        and total &gt;= #{t.total}
+      </if>
+      <if test="startDate!=null">
+        and create_time &gt;= #{startDate}
+      </if>
+      <if test="endDate!=null">
+        and create_time &lt;= #{endDate}
+      </if>
+    </where>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from assest_statistics
     where ID = #{id,jdbcType=VARCHAR}

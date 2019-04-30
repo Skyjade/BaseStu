@@ -6,14 +6,15 @@ package com.sky.common.entity;
  * @Date
  **/
 public class CommonResp {
-    private String msgCode;
+    private int msgCode;
     private String message;
 
-    public String getMsgCode() {
+
+    public int getMsgCode() {
         return msgCode;
     }
 
-    public void setMsgCode(String msgCode) {
+    public void setMsgCode(int msgCode) {
         this.msgCode = msgCode;
     }
 

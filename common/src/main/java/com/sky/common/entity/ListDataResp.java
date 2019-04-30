@@ -11,6 +11,11 @@ public class ListDataResp<T> extends CommonResp {
     List<T> data;
     long total;
 
+    public ListDataResp(List<T> data, long total) {
+        this.data = data;
+        this.total = total;
+    }
+
     public ListDataResp() {
     }
 
