@@ -5,6 +5,7 @@ import com.sky.common.entity.CommonResp;
 import com.sky.common.entity.ListDataResp;
 import com.sky.common.entity.ModelResp;
 import com.sky.common.entity.PageQuery;
+import com.sky.common.utils.str.UUIDUtils;
 import com.sky.manager.bean.AssestStatistics;
 import com.sky.manager.service.AssestStatisticsService;
 import io.swagger.annotations.Api;
@@ -12,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 /**
  * @Author wangtq
@@ -49,6 +52,7 @@ public class AssestsController {
     @PutMapping(value = "/statisitcs")
     public CommonResp updStatisitcs(@RequestBody AssestStatistics asset){
         CommonResp resp = new CommonResp();
+        asset.setUpdateTime(new Date());
         assestStatisticsService.update(asset);
         resp.setMsgCode(MsgInfo.SUC);
         resp.setMessage(MsgInfo.OPERATE_SUC);
@@ -70,6 +74,9 @@ public class AssestsController {
     @PostMapping(value = "/statisitcs}")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
         CommonResp resp = new CommonResp();
+        asset.setId(UUIDUtils.getUUID());
+        asset.setCreateTime(new Date());
+        asset.setUpdateTime(new Date());
         assestStatisticsService.add(asset);
         resp.setMsgCode(MsgInfo.SUC);
         resp.setMessage(MsgInfo.OPERATE_SUC);
