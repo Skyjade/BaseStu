@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.manager.dao.AssestStatisticsDao">
+  <resultMap id="BaseResultMap" type="com.sky.manager.bean.AssestStatistics">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="CREATE_TIME" jdbcType="DATE" property="createTime" />
+    <result column="ZFB" jdbcType="DOUBLE" property="zfb" />
+    <result column="WX" jdbcType="DOUBLE" property="wx" />
+    <result column="YHK" jdbcType="DOUBLE" property="yhk" />
+    <result column="TOTAL" jdbcType="DOUBLE" property="total" />
+    <result column="UPDATE_TIME" jdbcType="DATE" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CREATE_TIME, ZFB, WX, YHK, TOTAL, UPDATE_TIME
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from assest_statistics
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from assest_statistics
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sky.manager.bean.AssestStatistics">
+    insert into assest_statistics (ID, CREATE_TIME, ZFB, 
+      WX, YHK, TOTAL, UPDATE_TIME
+      )
+    values (#{id,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, #{zfb,jdbcType=DOUBLE}, 
+      #{wx,jdbcType=DOUBLE}, #{yhk,jdbcType=DOUBLE}, #{total,jdbcType=DOUBLE}, #{updateTime,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sky.manager.bean.AssestStatistics">
+    insert into assest_statistics
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="createTime != null">
+        CREATE_TIME,
+      </if>
+      <if test="zfb != null">
+        ZFB,
+      </if>
+      <if test="wx != null">
+        WX,
+      </if>
+      <if test="yhk != null">
+        YHK,
+      </if>
+      <if test="total != null">
+        TOTAL,
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="zfb != null">
+        #{zfb,jdbcType=DOUBLE},
+      </if>
+      <if test="wx != null">
+        #{wx,jdbcType=DOUBLE},
+      </if>
+      <if test="yhk != null">
+        #{yhk,jdbcType=DOUBLE},
+      </if>
+      <if test="total != null">
+        #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sky.manager.bean.AssestStatistics">
+    update assest_statistics
+    <set>
+      <if test="createTime != null">
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="zfb != null">
+        ZFB = #{zfb,jdbcType=DOUBLE},
+      </if>
+      <if test="wx != null">
+        WX = #{wx,jdbcType=DOUBLE},
+      </if>
+      <if test="yhk != null">
+        YHK = #{yhk,jdbcType=DOUBLE},
+      </if>
+      <if test="total != null">
+        TOTAL = #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="updateTime != null">
+        UPDATE_TIME = #{updateTime,jdbcType=DATE},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sky.manager.bean.AssestStatistics">
+    update assest_statistics
+    set CREATE_TIME = #{createTime,jdbcType=DATE},
+      ZFB = #{zfb,jdbcType=DOUBLE},
+      WX = #{wx,jdbcType=DOUBLE},
+      YHK = #{yhk,jdbcType=DOUBLE},
+      TOTAL = #{total,jdbcType=DOUBLE},
+      UPDATE_TIME = #{updateTime,jdbcType=DATE}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
