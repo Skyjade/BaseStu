@@ -51,6 +51,7 @@ public class AssestsController {
     @ApiOperation(value="修改单个信息", notes="提交一根据内容，修改资产信息")
     @PutMapping(value = "/statisitcs")
     public CommonResp updStatisitcs(@RequestBody AssestStatistics asset){
+        handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
         asset.setUpdateTime(new Date());
         assestStatisticsService.update(asset);
@@ -73,6 +74,7 @@ public class AssestsController {
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
     @PostMapping(value = "/statisitcs}")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
+        handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
         asset.setId(UUIDUtils.getUUID());
         asset.setCreateTime(new Date());
@@ -81,5 +83,13 @@ public class AssestsController {
         resp.setMsgCode(MsgInfo.SUC);
         resp.setMessage(MsgInfo.OPERATE_SUC);
         return resp;
+    }
+
+    /**
+     * 处理新增、修改参数
+     * @param asset
+     */
+    private void handleAddOrUpdData(AssestStatistics asset) {
+        asset.setTotal(asset.getWx()+asset.getYhk()+asset.getZfb());
     }
 }
