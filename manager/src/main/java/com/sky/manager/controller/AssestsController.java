@@ -32,7 +32,7 @@ public class AssestsController {
 
     @ApiOperation(value="获取单个信息", notes="提交一根据id，返回资产信息")
     @GetMapping(value = "/statisitcs/{id}")
-    public ModelResp getStatisitcs(@PathVariable String id){
+    public ModelResp<AssestStatistics> getStatisitcs(@PathVariable String id){
         ModelResp<AssestStatistics> resp = new ModelResp<>();
         AssestStatistics bean = assestStatisticsService.getOne(id);
         resp.setData(bean);
@@ -41,7 +41,7 @@ public class AssestsController {
 
     @ApiOperation(value="获取集合信息", notes="提交一根据条件，返回资产信息集合")
     @PostMapping(value = "/statisitcs/list")
-    public ListDataResp getStatisitcsList(@RequestBody PageQuery<AssestStatistics> query){
+    public ListDataResp<AssestStatistics> getStatisitcsList(@RequestBody PageQuery<AssestStatistics> query){
         //参数校验
         //返回结果
         log.info("开始查询集合...");
@@ -72,7 +72,7 @@ public class AssestsController {
 
 
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
-    @PostMapping(value = "/statisitcs}")
+    @PostMapping(value = "/statisitcs")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
