@@ -1,5 +1,7 @@
 package com.sky.common.entity;
 
+import com.sky.common.constant.MsgInfo;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,7 @@ public class ListDataResp<T> extends CommonResp {
     public ListDataResp(List<T> data, long total) {
         this.data = data;
         this.total = total;
+        this.setMsgCode(MsgInfo.SUC);
     }
 
     public ListDataResp() {

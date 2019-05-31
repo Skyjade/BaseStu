@@ -22,16 +22,17 @@ import java.util.Date;
  * @Date
  **/
 @RestController
-@RequestMapping(value = "/assestStatistics",produces  = "application/json;charset=UTF-8")
+@RequestMapping(value="assestStatistics",produces  = "application/json;charset=UTF-8")
 @Api(tags="资产管理类",value="资产管理类")
 @Slf4j
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AssestsController {
 
     @Autowired
     private AssestStatisticsService assestStatisticsService;
 
     @ApiOperation(value="获取单个信息", notes="提交一根据id，返回资产信息")
-    @GetMapping(value = "/statisitcs/{id}")
+    @GetMapping(value = "/{id}")
     public ModelResp<AssestStatistics> getStatisitcs(@PathVariable String id){
         ModelResp<AssestStatistics> resp = new ModelResp<>();
         AssestStatistics bean = assestStatisticsService.getOne(id);
@@ -40,7 +41,7 @@ public class AssestsController {
     }
 
     @ApiOperation(value="获取集合信息", notes="提交一根据条件，返回资产信息集合")
-    @PostMapping(value = "/statisitcs/list")
+    @PostMapping(value = "/list")
     public ListDataResp<AssestStatistics> getStatisitcsList(@RequestBody PageQuery<AssestStatistics> query){
         //参数校验
         //返回结果
@@ -49,7 +50,7 @@ public class AssestsController {
     }
 
     @ApiOperation(value="修改单个信息", notes="提交一根据内容，修改资产信息")
-    @PutMapping(value = "/statisitcs")
+    @PutMapping(value = "")
     public CommonResp updStatisitcs(@RequestBody AssestStatistics asset){
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
@@ -61,7 +62,7 @@ public class AssestsController {
     }
 
     @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除资产信息")
-    @DeleteMapping(value = "/statisitcs/{id}")
+    @DeleteMapping(value = "/{id}")
     public CommonResp delStatisitcs(@RequestBody String id){
         CommonResp resp = new CommonResp();
         assestStatisticsService.delete(id);
@@ -72,7 +73,7 @@ public class AssestsController {
 
 
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
-    @PostMapping(value = "/statisitcs")
+    @PostMapping(value = "/")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();

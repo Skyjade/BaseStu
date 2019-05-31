@@ -8,8 +8,8 @@ import java.util.Date;
  * @Date
  **/
 public class PageQuery<T> {
-    private int start;
-    private int limit;
+    private Integer start;
+    private Integer limit;
     private T t;
     private Date startDate;
     private Date endDate;
@@ -30,19 +30,19 @@ public class PageQuery<T> {
         this.endDate = endDate;
     }
 
-    public int getStart() {
+    public Integer getStart() {
         return start;
     }
 
-    public void setStart(int start) {
+    public void setStart(Integer start) {
         this.start = start;
     }
 
-    public int getLimit() {
+    public Integer getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public void setLimit(Integer limit) {
         this.limit = limit;
     }
 

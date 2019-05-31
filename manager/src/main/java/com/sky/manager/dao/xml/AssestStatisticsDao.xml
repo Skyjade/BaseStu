@@ -36,7 +36,12 @@
         and create_time &lt;= #{endDate}
       </if>
     </where>
-    limit #{start},#{limit}
+
+    <if test="start!=null and limit !=null">
+      limit #{start},#{limit}
+    </if>
+
+
   </select>
 
   <!--根据条件查询总数-->
