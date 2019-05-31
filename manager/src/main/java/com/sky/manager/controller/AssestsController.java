@@ -25,7 +25,6 @@ import java.util.Date;
 @RequestMapping(value="assestStatistics",produces  = "application/json;charset=UTF-8")
 @Api(tags="资产管理类",value="资产管理类")
 @Slf4j
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AssestsController {
 
     @Autowired
@@ -73,7 +72,7 @@ public class AssestsController {
 
 
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
-    @PostMapping(value = "/")
+    @PostMapping(value = "")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();

@@ -10,9 +10,26 @@
     <result column="TOTAL" jdbcType="DOUBLE" property="total" />
     <result column="UPDATE_TIME" jdbcType="DATE" property="updateTime" />
   </resultMap>
+
   <sql id="Base_Column_List">
     ID, CREATE_TIME, ZFB, WX, YHK, TOTAL, UPDATE_TIME
   </sql>
+
+  <!--分页查询where条件sql-->
+  <sql id="where">
+    <where>
+      <if test="t !=null and t.total!=''">
+        and total &gt;= #{t.total}
+      </if>
+      <if test="startDate!=null">
+        and create_time &gt;= #{startDate}
+      </if>
+      <if test="endDate!=null">
+        and create_time &lt;= #{endDate}
+      </if>
+    </where>
+  </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -25,22 +42,11 @@
     select
     <include refid="Base_Column_List" />
     from assest_statistics
-    <where>
-      <if test="t !=null and t.total!=''">
-        and total &gt;= #{t.total}
-      </if>
-      <if test="startDate!=null">
-        and create_time &gt;= #{startDate}
-      </if>
-      <if test="endDate!=null">
-        and create_time &lt;= #{endDate}
-      </if>
-    </where>
+    <include refid="where"/>
 
     <if test="start!=null and limit !=null">
       limit #{start},#{limit}
     </if>
-
 
   </select>
 
@@ -49,23 +55,15 @@
     select
     count(1)
     from assest_statistics
-    <where>
-      <if test="t !=null and t.total!=''">
-        and total &gt;= #{t.total}
-      </if>
-      <if test="startDate!=null">
-        and create_time &gt;= #{startDate}
-      </if>
-      <if test="endDate!=null">
-        and create_time &lt;= #{endDate}
-      </if>
-    </where>
+   <include refid="where"/>
   </select>
+
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from assest_statistics
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
+
   <insert id="insert" parameterType="com.sky.manager.bean.AssestStatistics">
     insert into assest_statistics (ID, CREATE_TIME, ZFB, 
       WX, YHK, TOTAL, UPDATE_TIME
@@ -74,6 +72,7 @@
       #{wx,jdbcType=DOUBLE}, #{yhk,jdbcType=DOUBLE}, #{total,jdbcType=DOUBLE}, #{updateTime,jdbcType=DATE}
       )
   </insert>
+
   <insert id="insertSelective" parameterType="com.sky.manager.bean.AssestStatistics">
     insert into assest_statistics
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -123,6 +122,7 @@
       </if>
     </trim>
   </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.sky.manager.bean.AssestStatistics">
     update assest_statistics
     <set>
