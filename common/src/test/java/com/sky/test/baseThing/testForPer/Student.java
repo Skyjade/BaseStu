@@ -1,4 +1,4 @@
-package com.sky.test.baseThing;
+package com.sky.test.baseThing.testForPer;
 
 /**
  * @Author wangtq

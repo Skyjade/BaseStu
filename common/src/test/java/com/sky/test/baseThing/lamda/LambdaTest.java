@@ -1,5 +1,6 @@
-package com.sky.test.baseThing;
+package com.sky.test.baseThing.lamda;
 
+import com.sky.test.baseThing.testForPer.Student;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -38,6 +39,8 @@ public class LambdaTest {
                  .filter(s->s.split(",")[0].length()>3).
                  filter(s->s.split(",")[1].equals("女"))
           .forEach(name-> System.out.println(name));
+
+         //Collectors.counting
         /**
          * 管道流只能被调用一次，调用完就关闭或者流转到下一个流
          */
@@ -73,6 +76,7 @@ public class LambdaTest {
         //获取指定索引位置的单个字符
         char c = b.charAt(0);
         System.out.println(a.equalsIgnoreCase(b));
+
     }
 
 
@@ -104,6 +108,10 @@ public class LambdaTest {
         long round1 = Math.round(3.2);
         double pi = Math.PI;
         System.out.println("");
+    }
+
+
+    public void save(){
     }
 
 
