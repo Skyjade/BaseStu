@@ -1,7 +1,9 @@
 package com.sky.test.baseThing.concurrent;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
+import java.util.Random;
 import java.util.concurrent.*;
 
 /**
@@ -79,7 +81,7 @@ public class ConcurrentTest {
         // 创建延时队列
         DelayQueue<Message> queue = new DelayQueue<Message>();
         // 添加延时消息,m1 延时3s
-        Message m1 = new Message(1, "test1-Ia", 3000);
+        Message m1 = new Message(1, "test1-Ia", 8000);
         // 添加延时消息,m2 延时10s
         Message m2 = new Message(2, "test1-Ib", 3000);
         //将延时消息放到延时队列中
@@ -90,12 +92,63 @@ public class ConcurrentTest {
         exec.execute(new Consumer(queue));
         exec.shutdown();
         try {
-            latch.await(5,TimeUnit.SECONDS);
+            latch.await(50,TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
 
     }
+
+
+
+    @Test
+    public void test0612(){
+        //
+        DelayQueue<ExamStudent> studentDelayQueue = new DelayQueue<ExamStudent>();
+        CountDownLatch countDownLatch=new CountDownLatch(500);
+        ExecutorService pool = Executors.newCachedThreadPool();
+        // pool.execute(new Teacher());
+        for (int i=1;i<=500;i++){
+            pool.execute(new ExamStudent("stu"+i,30+ RandomUtils.nextInt(0,120),countDownLatch));
+        }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * /**
+     * 一、线程池：提供了一个线程队列，队列中保存着所有等待状态的线程。避免了创建与销毁额外的开销，提高了响应速度。
+     * 二、线程池的体系结构：
+     *    java.util.concurrent.Executor:负责线程的使用与调度的根接口
+     *       |-- ExecutorService 子接口：线程池的主要接口
+     *          |-- ThreadPoolExecutor 线程池的实现类
+     *          |-- ScheduledExecutorService 子接口：负责线程的调度
+     *             |--ScheduledThreadPoolExecutor：继承了ThreadPoolExecutor实现了ScheduledExecutorService
+     * <p>
+     * 三、工具类：Executors
+     * ExecutorService newFixedThreadPool():创新固定大小的线程池、
+     * ExecutorService newCacheThreadPool():缓存线程池，线程池的数量不固定，可以根据需求自动的而更改数量。
+     * ExecutorService newSingleThreadExecutor():创建单个线程池，线程池中只有一个线程
+     * <p>
+     * ScheduledExecutorService newScheduledThreadPool():创建固定大小的线程，可以延迟或定时执行任务。
+     */
+    @Test
+    public void astest1() throws Exception{
+        ScheduledExecutorService pool = Executors.newScheduledThreadPool(5);
+        for (int i = 0; i < 5; i++) {
+            Future<Integer> result = pool.schedule(() -> {
+                 int num = new Random().nextInt(100);//生成随机数
+                 System.out.println(Thread.currentThread().getName() + " : " + num);
+                 return num;
+             }, 3, TimeUnit.SECONDS);
+            System.out.println(result.get());
+        }
+        pool.shutdown();
+      }
 
 }
