@@ -1,10 +1,10 @@
-package com.sky.test.baseThing.concurrent;
+package com.sky.test.baseThing.concurrent.TestExam;
 
 import java.util.concurrent.DelayQueue;
 
 /**
  * @Author wangtq
- * @Description
+ * @Description 教师->消费者
  * @Date
  **/
 public class Teacher implements Runnable {
@@ -14,14 +14,14 @@ public class Teacher implements Runnable {
         this.delayQueue = delayQueue;
     }
 
-
     @Override
     public void run() {
         while(true){
             try {
-
-                delayQueue.take().run();
-
+                if(!Thread.interrupted()){
+                    ExamStudent stu = delayQueue.take();
+                    stu.submitPaper();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

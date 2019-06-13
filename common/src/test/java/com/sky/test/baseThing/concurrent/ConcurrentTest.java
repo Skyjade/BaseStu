@@ -1,5 +1,8 @@
 package com.sky.test.baseThing.concurrent;
 
+import com.sky.test.baseThing.concurrent.TestExam.ExamStudent;
+import com.sky.test.baseThing.concurrent.TestExam.ExamTerminator;
+import com.sky.test.baseThing.concurrent.TestExam.Teacher;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
@@ -99,22 +102,47 @@ public class ConcurrentTest {
 
 
     }
+//    java中声明一个静态变量，意味着只有一个副本，无论创建了多少个类的对象，即使没有创建对象，变量也可以访问，
+//    但是线程可能具有本地缓存的值。 当变量volatile而不是静态时，每个object都有一个变量，所以，表面看来，
+//    与正常变量没有区别，但是与静态完全不同。然而，即使使用object字段，线程也可能在本地缓存变量值。
+//    这意味着如果两个线程同时更新同一个对象的变量，并且该变量未被声明为volatile，
+//    则可能存在一个线程在缓存中具有旧值的情况。 即使你通过多个线程访问静态值，每个线程都可以具有本地缓存副本，为
+//    了避免这种情况，可以将变量申明为静态volatile，这将强制线程每次读取全局值，但是volatile并不能代替正确的同步！
 
-
-
+    public static volatile int subitNUM=0;
+    public static volatile int subitByTeacherNUM=0;
+    /**
+     * 模拟exam场景
+     */
     @Test
-    public void test0612(){
+    public void testExam(){
         //
-        DelayQueue<ExamStudent> studentDelayQueue = new DelayQueue<ExamStudent>();
-        CountDownLatch countDownLatch=new CountDownLatch(500);
+        DelayQueue<ExamStudent> studentDelayQueue = new DelayQueue<>();
+        CountDownLatch countDownLatch=new CountDownLatch(51);
         ExecutorService pool = Executors.newCachedThreadPool();
         // pool.execute(new Teacher());
-        for (int i=1;i<=500;i++){
-            pool.execute(new ExamStudent("stu"+i,30+ RandomUtils.nextInt(0,120),countDownLatch));
-        }
+        for (int i=1;i<=50;i++){
+            //放置生产者
+            studentDelayQueue.put(
+                    new ExamStudent("stu"+i,
+                    10+ RandomUtils.nextInt(0,40),
+                    countDownLatch));
 
+        }
+        //放置终结者-->终结消费者
+        studentDelayQueue.put(new ExamTerminator(countDownLatch,pool,studentDelayQueue));
+
+        //消费者
+        Teacher teacher = new Teacher(studentDelayQueue);
+        //开始执行exam
+        pool.execute(teacher);
         try {
+            //wait.....
             countDownLatch.await();
+            //结束
+            System.out.println("自动提交人数："+subitNUM);
+            System.out.println("被动提交人数："+subitByTeacherNUM);
+            //countDownLatch.countDown();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -141,14 +169,20 @@ public class ConcurrentTest {
     public void astest1() throws Exception{
         ScheduledExecutorService pool = Executors.newScheduledThreadPool(5);
         for (int i = 0; i < 5; i++) {
-            Future<Integer> result = pool.schedule(() -> {
+             pool.schedule(() -> {
                  int num = new Random().nextInt(100);//生成随机数
                  System.out.println(Thread.currentThread().getName() + " : " + num);
-                 return num;
-             }, 3, TimeUnit.SECONDS);
-            System.out.println(result.get());
+                // return num;
+             }, 0, TimeUnit.SECONDS);
+            Thread.sleep(2000);
+         //   System.out.println(result.get());
         }
         pool.shutdown();
-      }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
