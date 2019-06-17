@@ -1,10 +1,7 @@
 package com.sky.manager.controller;
 
 import com.sky.common.constant.MsgInfo;
-import com.sky.common.entity.CommonResp;
-import com.sky.common.entity.ListDataResp;
-import com.sky.common.entity.ModelResp;
-import com.sky.common.entity.PageQuery;
+import com.sky.common.entity.*;
 import com.sky.common.utils.str.UUIDUtils;
 import com.sky.manager.bean.AssestStatistics;
 import com.sky.manager.service.AssestStatisticsService;
@@ -70,6 +67,15 @@ public class AssestsController {
         return resp;
     }
 
+    @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除资产信息")
+    @DeleteMapping(value = "/batchRemove")
+    public CommonResp delStatisitcsBatch(@RequestBody BatchIdResult ids){
+        CommonResp resp = new CommonResp();
+        assestStatisticsService.deleteBatch(ids.getResult());
+        resp.setMsgCode(MsgInfo.SUC);
+        resp.setMessage(MsgInfo.OPERATE_SUC);
+        return resp;
+    }
 
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
     @PostMapping(value = "")

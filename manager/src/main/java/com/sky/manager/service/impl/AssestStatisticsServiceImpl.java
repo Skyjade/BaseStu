@@ -1,7 +1,9 @@
 package com.sky.manager.service.impl;
 
+import com.sky.common.constant.MsgInfo;
 import com.sky.common.entity.ListDataResp;
 import com.sky.common.entity.PageQuery;
+import com.sky.common.exception.BusinessException;
 import com.sky.manager.bean.AssestStatistics;
 import com.sky.manager.dao.AssestStatisticsDao;
 import com.sky.manager.dao.MyBatisBaseDao;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author wangtq
@@ -32,5 +35,13 @@ public class AssestStatisticsServiceImpl  extends BaseServiceImpl<AssestStatisti
         List<AssestStatistics> statisticsList = assestStatisticsDao.getStatisticsList(query);
         long count = assestStatisticsDao.getCountByCondition(query);
         return  new ListDataResp<>(statisticsList,count);
+    }
+
+    @Override
+    public void deleteBatch(List ids) {
+        int i = assestStatisticsDao.deleleBatch(ids);
+        if(i==0){
+            throw new BusinessException(MsgInfo.Delete_Fail);
+        }
     }
 }

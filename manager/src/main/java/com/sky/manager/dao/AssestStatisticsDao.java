@@ -11,4 +11,6 @@ import java.util.List;
 public interface AssestStatisticsDao extends MyBatisBaseDao<AssestStatistics, String> {
     List<AssestStatistics> getStatisticsList(PageQuery<AssestStatistics> query);
     long getCountByCondition(PageQuery<AssestStatistics> query);
+
+    int deleleBatch(List ids);
 }

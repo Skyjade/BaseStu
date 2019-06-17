@@ -64,7 +64,16 @@
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
 
-  <insert id="insert" parameterType="com.sky.manager.bean.AssestStatistics">
+    <!--批量删除-->
+    <delete id="deleleBatch">
+      delete from assest_statistics
+      where id in
+      <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+        #{item, jdbcType=VARCHAR}
+      </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="com.sky.manager.bean.AssestStatistics">
     insert into assest_statistics (ID, CREATE_TIME, ZFB, 
       WX, YHK, TOTAL, UPDATE_TIME
       )
