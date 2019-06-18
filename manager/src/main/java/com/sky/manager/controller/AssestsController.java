@@ -41,13 +41,14 @@ public class AssestsController {
     public ListDataResp<AssestStatistics> getStatisitcsList(@RequestBody PageQuery<AssestStatistics> query){
         //参数校验
         //返回结果
-        log.info("开始查询集合...");
+        log.info("开始查询集合信息...");
         return assestStatisticsService.getStatisticsList(query);
     }
 
     @ApiOperation(value="修改单个信息", notes="提交一根据内容，修改资产信息")
     @PutMapping(value = "")
     public CommonResp updStatisitcs(@RequestBody AssestStatistics asset){
+        log.info("开始修改信息...");
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
         asset.setUpdateTime(new Date());
@@ -60,6 +61,7 @@ public class AssestsController {
     @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除资产信息")
     @DeleteMapping(value = "/{id}")
     public CommonResp delStatisitcs(@RequestBody String id){
+        log.info("开始删除单个信息...");
         CommonResp resp = new CommonResp();
         assestStatisticsService.delete(id);
         resp.setMsgCode(MsgInfo.SUC);
@@ -67,11 +69,12 @@ public class AssestsController {
         return resp;
     }
 
-    @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除资产信息")
+    @ApiOperation(value="批量删除信息", notes="提交一根据内容，删除资产信息")
     @DeleteMapping(value = "/batchRemove")
     public CommonResp delStatisitcsBatch(@RequestBody BatchIdResult ids){
+        log.info("开始批量删除信息...");
         CommonResp resp = new CommonResp();
-        assestStatisticsService.deleteBatch(ids.getResult());
+        assestStatisticsService.deleteBatchByKeys(ids.getResult());
         resp.setMsgCode(MsgInfo.SUC);
         resp.setMessage(MsgInfo.OPERATE_SUC);
         return resp;
@@ -80,6 +83,7 @@ public class AssestsController {
     @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
     @PostMapping(value = "")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
+        log.info("开始新增单个信息...");
         handleAddOrUpdData(asset);
         CommonResp resp = new CommonResp();
         asset.setId(UUIDUtils.getUUID());

@@ -1,11 +1,13 @@
 package com.sky.manager.service.impl;
 
+import com.sky.common.constant.MsgInfo;
 import com.sky.common.exception.BusinessException;
 import com.sky.manager.dao.MyBatisBaseDao;
 import com.sky.manager.service.BaseService;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author wangtq
@@ -49,5 +51,13 @@ public abstract class BaseServiceImpl <T extends Serializable> implements BaseSe
             throw new BusinessException("no exist data");
         }
         return o;
+    }
+
+    @Override
+    public void deleteBatchByKeys(List ids) {
+        int i = getDao().deleleBatchByKeys(ids);
+        if(i==0){
+            throw new BusinessException(MsgInfo.Delete_Fail);
+        }
     }
 }

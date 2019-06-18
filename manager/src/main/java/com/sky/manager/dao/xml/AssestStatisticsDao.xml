@@ -65,7 +65,7 @@
   </delete>
 
     <!--批量删除-->
-    <delete id="deleleBatch">
+    <delete id="deleleBatchByKeys">
       delete from assest_statistics
       where id in
       <foreach collection="list" item="item" index="index" open="(" separator="," close=")">

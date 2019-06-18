@@ -37,11 +37,5 @@ public class AssestStatisticsServiceImpl  extends BaseServiceImpl<AssestStatisti
         return  new ListDataResp<>(statisticsList,count);
     }
 
-    @Override
-    public void deleteBatch(List ids) {
-        int i = assestStatisticsDao.deleleBatch(ids);
-        if(i==0){
-            throw new BusinessException(MsgInfo.Delete_Fail);
-        }
-    }
+
 }
