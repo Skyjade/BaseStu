@@ -1,5 +1,7 @@
 package com.sky.manager.controller;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.sky.common.constant.MsgInfo;
 import com.sky.common.entity.*;
 import com.sky.common.utils.str.UUIDUtils;
@@ -8,6 +10,7 @@ import com.sky.manager.service.AssestStatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -101,5 +104,18 @@ public class AssestsController {
      */
     private void handleAddOrUpdData(AssestStatistics asset) {
         asset.setTotal(asset.getWx()+asset.getYhk()+asset.getZfb());
+    }
+
+    @Test
+    public void test1(){
+        BiMap<String,String> britishToAmerican = HashBiMap.create();
+// Initialise and use just like a normal map
+        britishToAmerican.put("aubergine","egglant");
+        britishToAmerican.put("courgette","zucchini");
+        britishToAmerican.put("jam","jelly");
+        String content = britishToAmerican.get("jam");
+
+        BiMap<String, String> inverse = britishToAmerican.inverse();
+        System.out.println(inverse.get("jelly"));
     }
 }

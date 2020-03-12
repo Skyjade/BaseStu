@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -63,4 +64,44 @@ public class TestController {
         resp.setMessage(MsgInfo.OPERATE_SUC);
         return resp;
     }
+
+
+    public static void main(String[] args) {
+
+        //要改的文件夹路径
+        String path= "E:\\电视剧\\sport siwmer";
+
+        getNew(path);
+
+    }
+    private static void getNew(String path) {
+        String mkvpath= "E:\\电视剧\\mkv3";
+        File file = new File(path);
+        //得到文件夹下的所有文件和文件夹
+        String[] list = file.list();
+
+        if(list!=null && list.length>0){
+            for (String oldName : list) {
+                File oldFile = new File(path,oldName);
+                //判断出文件和文件夹
+                if(!oldFile.isDirectory()){
+                    //文件则判断是不是要修改的
+                    if(oldName.contains("copy")){
+//                        System.out.println(oldName);
+//                        String newoldName = oldName.substring(0, oldName.lastIndexOf("."))+"copy.mp4";
+//                        System.out.println(newoldName);
+//                        File newFile = new File(mkvpath,newoldName);
+//                        boolean flag = oldFile.renameTo(newFile);
+//                        System.out.println(flag);
+                        file.delete();
+                    }
+                }else{
+                    //文件夹则迭代
+                    String newpath=path+"/"+oldName;
+                    getNew(newpath);
+                }
+            }
+        }
+    }
+
 }
