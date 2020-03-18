@@ -19,6 +19,47 @@ public class test {
     }
 
 
+
+    @Test
+    public void tesdast1(){
+        String s = new String("He是的_|\\llo%#");
+        StringBuilder strDest = new StringBuilder();
+        for(int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            switch (ch)
+            {
+                case '\0':
+                    strDest.append("\\0");
+                    break;
+                case '\n':
+                    strDest.append("\\n");
+                    break;
+                case '\r':
+                    strDest.append("\\r");
+                    break;
+                case '\'':
+                    strDest.append("\\'");
+                    break;
+                case '"':
+                    strDest.append("\\\"");
+                    break;
+                case '\\':
+                    strDest.append("\\\\");
+                    break;
+                case '%':
+                    strDest.append("\\%");
+                    break;
+                case '_':
+                    strDest.append("\\_");
+                    break;
+                default:
+                    strDest.append(ch);
+                    break;
+            }
+        }
+        System.out.println(strDest.toString());
+    }
+
     @Test
     public void test1(){
         BigDecimal a = new BigDecimal (121.00);
