@@ -1,9 +1,10 @@
 package com.sky.manager.service;
 
-import org.springframework.util.concurrent.ListenableFuture;
+import com.sky.common.entity.ModelResp;
+
 public interface TestService {
 
-    void testAsync();
 
-    ListenableFuture<String> testAsyncResult();
+    ModelResp getWeaData(String city);
+
 }
