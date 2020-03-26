@@ -23,14 +23,14 @@ import java.util.Date;
  **/
 @RestController
 @RequestMapping(value="assestStatistics",produces  = "application/json;charset=UTF-8")
-@Api(tags="资产管理类",value="资产管理类")
+@Api(tags="FUND类",value="FUND类")
 @Slf4j
 public class AssestsController {
 
     @Autowired
     private AssestStatisticsService assestStatisticsService;
 
-    @ApiOperation(value="获取单个信息", notes="提交一根据id，返回资产信息")
+    @ApiOperation(value="获取单个信息", notes="提交一根据id，返回Fund信息")
     @GetMapping(value = "/{id}")
     public ModelResp<AssestStatistics> getStatisitcs(@PathVariable String id){
         ModelResp<AssestStatistics> resp = new ModelResp<>();
@@ -39,7 +39,7 @@ public class AssestsController {
         return resp;
     }
 
-    @ApiOperation(value="获取集合信息", notes="提交一根据条件，返回资产信息集合")
+    @ApiOperation(value="获取集合信息", notes="提交一根据条件，返回Fund信息集合")
     @PostMapping(value = "/list")
     public ListDataResp<AssestStatistics> getStatisitcsList(@RequestBody PageQuery<AssestStatistics> query){
         //参数校验
@@ -48,7 +48,7 @@ public class AssestsController {
         return assestStatisticsService.getStatisticsList(query);
     }
 
-    @ApiOperation(value="修改单个信息", notes="提交一根据内容，修改资产信息")
+    @ApiOperation(value="修改单个信息", notes="提交一根据内容，修改Fund信息")
     @PutMapping(value = "")
     public CommonResp updStatisitcs(@RequestBody AssestStatistics asset){
         log.info("开始修改信息...");
@@ -61,7 +61,7 @@ public class AssestsController {
         return resp;
     }
 
-    @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除资产信息")
+    @ApiOperation(value="删除单个信息", notes="提交一根据内容，删除Fund信息")
     @DeleteMapping(value = "/{id}")
     public CommonResp delStatisitcs(@RequestBody String id){
         log.info("开始删除单个信息...");
@@ -72,7 +72,7 @@ public class AssestsController {
         return resp;
     }
 
-    @ApiOperation(value="批量删除信息", notes="提交一根据内容，删除资产信息")
+    @ApiOperation(value="批量删除信息", notes="提交一根据内容，删除Fund信息")
     @DeleteMapping(value = "/batchRemove")
     public CommonResp delStatisitcsBatch(@RequestBody BatchIdResult ids){
         log.info("开始批量删除信息...");
@@ -83,7 +83,7 @@ public class AssestsController {
         return resp;
     }
 
-    @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增资产信息")
+    @ApiOperation(value="新增单个信息", notes="提交一根据内容，新增Fund信息")
     @PostMapping(value = "")
     public CommonResp addStatisitcs(@RequestBody AssestStatistics asset){
         log.info("开始新增单个信息...");
