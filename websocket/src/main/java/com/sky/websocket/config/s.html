@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    function connect() {
+        var socket = new SockJS('/alarm/webSocketEndPoint');
+        stompClient = Stomp.over(socket);
+        var headers={
+            //TODO 暂时不传，后续传UAPToken或自己的权限用户信息
+            username:'admin',
+            password:'admin'
+        };
+        stompClient.connect(headers, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/{系统Code}/{类型1}', function (greeting) {
+                showGreeting(JSON.parse(greeting.body).userId, JSON.parse(greeting.body).content);
+            });
+        });
+    }
+</script>
+</body>
+</html>
