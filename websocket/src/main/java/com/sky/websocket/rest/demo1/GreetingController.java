@@ -2,7 +2,6 @@ package com.sky.websocket.rest.demo1;
 
 import com.sky.websocket.model.Greeting;
 import com.sky.websocket.model.HelloMessage;
-import io.swagger.annotations.Api;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +16,6 @@ import java.util.Map;
  * Date: 2017/11/4 11:49
  */
 @RestController
-@Api(tags = "demo1")
 public class GreetingController {
 
     /*

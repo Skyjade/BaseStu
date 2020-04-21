@@ -3,7 +3,6 @@ package com.sky.websocket.rest.demo3;
 import com.sky.websocket.login.Authentication;
 import com.sky.websocket.model.Greeting;
 import com.sky.websocket.model.HelloMessage;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -20,7 +19,6 @@ import java.util.Date;
  * Date: 2017/11/4 11:49
  */
 @RestController
-@Api(tags = "demo3")
 public class GreetingController3 {
 
     private final SimpMessagingTemplate messagingTemplate;
