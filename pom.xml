@@ -9,6 +9,7 @@
         <module>manager</module>
         <module>common</module>
         <module>websocket</module>
+        <module>concurrency</module>
     </modules>
     <groupId>com.sky</groupId>
     <artifactId>BaseStu</artifactId>
