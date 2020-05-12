@@ -13,7 +13,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/webSocket/webSocketEndPoint');
+    var socket = new SockJS('ws://192.168.15.126:18080/alarm-server/webSocketEndPoint');
     stompClient = Stomp.over(socket);
     var headers={
         username:'admin',
