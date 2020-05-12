@@ -35,7 +35,7 @@
             stompClient.connect(headers, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
-                stompClient.subscribe('/confirm/2', function (greeting) {
+                stompClient.subscribe('/ringNotice/2', function (greeting) {
                     showGreeting(JSON.parse(greeting.body).userId, JSON.parse(greeting.body));
                 });
             });

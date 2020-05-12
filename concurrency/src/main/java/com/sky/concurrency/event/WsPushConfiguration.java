@@ -1,11 +1,10 @@
-package com.hexing.alarmsystem.webPub.event;
+package com.sky.concurrency.event;
 
 import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 import java.util.concurrent.Executors;
 

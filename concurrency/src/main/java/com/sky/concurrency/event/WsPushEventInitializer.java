@@ -1,4 +1,4 @@
-package com.hexing.alarmsystem.webPub.event;
+package com.sky.concurrency.event;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import org.springframework.stereotype.Component;

@@ -1,10 +1,7 @@
-package com.hexing.alarmsystem.webPub.event;
+package com.sky.concurrency.event;
 
-import com.hexing.alarmsystem.basic.jpa.model.AlarmContent;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -17,7 +14,7 @@ public class WsPushEventProducer {
     private Disruptor<WsPushEvent>  wsPushEventDisruptor;
 
 
-    private void send(AlarmContent content,WsPushEvent.Action action){
+    private void send(Object content,WsPushEvent.Action action){
         RingBuffer<WsPushEvent> ringBuffer =wsPushEventDisruptor.getRingBuffer();
         long next = ringBuffer.next();
         try{
@@ -29,7 +26,7 @@ public class WsPushEventProducer {
         }
     }
 
-    public void send(List<AlarmContent> dataList, WsPushEvent.Action action){
+    public void send(List<Object> dataList, WsPushEvent.Action action){
         dataList.forEach(s->send(s,action));
     }
 }
