@@ -25,13 +25,15 @@
         }
 
         function connect() {
-            var socket = new WebSocket('ws://192.168.15.26:18080/alarm-server/webSocketEndPoint');
+            // ws://192.168.15.26:18080/alarm-server/webSocketEndPoint'
+            //ws://127.0.0.1:8080/webSocketEndPoint
+            var socket = new WebSocket( 'ws://192.168.15.26:18080/alarm-server/webSocketEndPoint');
             // var socket = new WebSocket('/webSocket/webSocketEndPoint');
             stompClient = Stomp.over(socket);
             var headers={
                 username:$("#username").val(),
                 password:$("#password").val()
-            };
+            };//数据采集
             stompClient.connect(headers, function (frame) {
                 setConnected(true);
                 console.log('Connected: ' + frame);
