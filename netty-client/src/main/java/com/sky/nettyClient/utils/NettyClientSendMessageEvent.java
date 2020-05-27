@@ -1,6 +1,6 @@
 package com.sky.nettyClient.utils;
 
-import com.sky.nettyClient.entity.Message;
+import com.sky.nettyBase.entity.Message;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

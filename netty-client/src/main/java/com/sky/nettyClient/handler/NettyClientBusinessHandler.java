@@ -1,7 +1,7 @@
 package com.sky.nettyClient.handler;
 
 
-import com.sky.nettyClient.entity.Message;
+import com.sky.nettyBase.entity.Message;
 import com.sky.nettyClient.utils.NettyClientSendMessageEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -68,30 +68,25 @@ public class NettyClientBusinessHandler extends ChannelInboundHandlerAdapter {
      */
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (IdleStateEvent.class.isAssignableFrom(evt.getClass())) {
-//            if(UNCONNECT_NUM >= 4) {
-//                System.err.println("connect status is disconnect.");
-//                ctx.close();
-//                //此处当重启次数达到4次之后，关闭此链接后，并重新请求进行一次登录请求
-//
-//                return;
-//            }
+            if(UNCONNECT_NUM >= 4) {
+                //此处当重启次数达到4次之后，关闭此链接后，并重新请求进行一次登录请求
+                System.err.println("connect status is disconnect.");
+                ctx.close();
+                return;
+            }
             IdleStateEvent event= (IdleStateEvent) evt;
             switch (event.state()) {
                 case WRITER_IDLE:
                     System.out.println("send ping to server---date=" + new Date());
-                   // ctx.channel().writeAndFlush(new Message(ConvertUtil.beatStr()));
-                    //System.err.println("writer_idle over. and UNCONNECT_NUM=" + UNCONNECT_NUM);
+                    ctx.channel().writeAndFlush(new Message("t3st"));
                     break;
                 case READER_IDLE:
                     System.err.println("reader_idle over.");
-                    UNCONNECT_NUM++;
                     //读取服务端消息超时时，直接断开该链接，并重新登录请求，建立通道
-
+                    ctx.channel().writeAndFlush(new Message("t3st"));
                 case ALL_IDLE:
                     System.err.println("all_idle over.");
-                    UNCONNECT_NUM++;
-                    //读取服务端消息超时时，直接断开该链接，并重新登录请求，建立通道
-
+                    ctx.channel().writeAndFlush(new Message("t3st"));
                 default:
                     break;
             }

@@ -1,22 +1,11 @@
-package com.sky.nettyClient.entity;
+package com.sky.nettyBase.entity;
+
+import lombok.Builder;
 
 public class Message {
     private int length;
     private String body;
-    private MsgType type;
 
-
-    public MsgType getType() {
-        return type;
-    }
-
-    public void setType(MsgType type) {
-        this.type = type;
-    }
-
-    public enum  MsgType {
-        PING,REPLY,ACK
-    }
     public int getLength() {
         return length;
     }

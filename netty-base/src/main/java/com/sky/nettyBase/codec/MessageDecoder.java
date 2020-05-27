@@ -1,12 +1,13 @@
-package com.sky.netty.codec;
+package com.sky.nettyBase.codec;
 
 
-import com.sky.netty.entity.Message;
+import com.sky.nettyBase.entity.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Netty解码器
@@ -45,7 +46,7 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
         buf.readBytes(body);
         Message message = new Message();
         message.setLength(bodyLength);
-        message.setBody(new String(body,"UTF-8"));
+        message.setBody(new String(body, StandardCharsets.UTF_8));
        // message.setOrderId(orderId);
         return message;
     }

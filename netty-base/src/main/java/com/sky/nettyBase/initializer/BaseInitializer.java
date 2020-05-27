@@ -1,8 +1,7 @@
-package com.sky.netty.initializer;
+package com.sky.nettyBase.initializer;
 
-import com.sky.netty.codec.MessageDecoder;
-import com.sky.netty.codec.MessageEncoder;
-import com.sky.netty.handler.NettyClientBusinessHandler;
+import com.sky.nettyBase.codec.MessageDecoder;
+import com.sky.nettyBase.codec.MessageEncoder;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -15,7 +14,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 /**
  * Netty初始化设置
  */
-public class DefaultNettyClientInitializer extends ChannelInitializer<SocketChannel> {
+public class BaseInitializer extends ChannelInitializer<SocketChannel> {
 
     private final static int readerIdleTimeSeconds = 30;//读操作空闲30秒
     private final static int writerIdleTimeSeconds = 15;//写操作空闲15秒
@@ -42,8 +41,8 @@ public class DefaultNettyClientInitializer extends ChannelInitializer<SocketChan
         this.loadDecoderChannelHandler(channelPipeline);
         //加载编码器
         this.loadEncoderChannelHandler(channelPipeline);
-        //加载进站处理器
-        channelPipeline.addLast(new NettyClientBusinessHandler());
+//        //加载进站处理器
+//        channelPipeline.addLast(new NettyClientBusinessHandler());
     }
 
 
