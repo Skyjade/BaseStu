@@ -11,8 +11,9 @@
     </parent>
 
     <groupId>com.sky</groupId>
-    <artifactId>netty</artifactId>
+    <artifactId>netty-server</artifactId>
     <version>1.0-SNAPSHOT</version>
+
 
     <dependencies>
         <dependency>
@@ -69,13 +70,6 @@
             <version>1.2.54</version>
         </dependency>
 
-        <!-- RabbitMQ -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
         <!-- 本地缓存   -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -114,7 +108,4 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
-
-
 </project>
