@@ -12,7 +12,7 @@ public class MbbTest {
     @Test
     public void test1(){
         try {
-            SharedMemoryMapFile sharedMemoryMapFile = new SharedMemoryMapFile("e:/testSharedMemJava.txt", 10000);
+            SharedMemoryMapFile sharedMemoryMapFile = new SharedMemoryMapFile("D:/Test/testSharedMemJava.txt", 10000);
 
             sharedMemoryMapFile.putByte(1, (byte)1);
             sharedMemoryMapFile.putByte(2, (byte)3);
