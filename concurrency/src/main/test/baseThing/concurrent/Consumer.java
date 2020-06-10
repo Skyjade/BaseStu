@@ -1,4 +1,4 @@
-package com.sky.test.baseThing.concurrent;
+package baseThing.concurrent;
 
 import java.util.concurrent.DelayQueue;
 

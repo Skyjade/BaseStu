@@ -1,4 +1,4 @@
-package com.sky.test.baseThing.concurrent.TestExam;
+package baseThing.concurrent.TestExam;
 
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;

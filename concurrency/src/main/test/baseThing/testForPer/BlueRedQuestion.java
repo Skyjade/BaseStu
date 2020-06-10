@@ -1,4 +1,4 @@
-package com.sky.test.baseThing.testForPer;
+package baseThing.testForPer;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;

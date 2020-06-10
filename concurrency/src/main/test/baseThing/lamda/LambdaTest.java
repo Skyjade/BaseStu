@@ -1,4 +1,4 @@
-package com.sky.test.baseThing.lamda;
+package baseThing.lamda;
 
 import com.sky.test.baseThing.testForPer.Student;
 import org.junit.Test;
