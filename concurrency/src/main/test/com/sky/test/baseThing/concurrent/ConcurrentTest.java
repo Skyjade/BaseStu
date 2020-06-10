@@ -1,4 +1,4 @@
-package baseThing.concurrent;
+package com.sky.test.baseThing.concurrent;
 
 import com.sky.test.baseThing.concurrent.TestExam.ExamStudent;
 import com.sky.test.baseThing.concurrent.TestExam.ExamTerminator;
