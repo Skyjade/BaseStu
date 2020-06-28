@@ -12,6 +12,7 @@
         <module>common</module>
         <module>websocket</module>
         <module>concurrency</module>
+        <module>middleWare</module>
     </modules>
     <groupId>com.sky</groupId>
     <artifactId>BaseStu</artifactId>
